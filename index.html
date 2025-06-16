@@ -46,21 +46,87 @@
     }
 
     /* Responsive adjustments */
+    @media (max-width: 1024px) {
+        .container {
+            padding: 2rem;
+        }
+        .checkbox-grid {
+            grid-template-columns: 1fr;
+        }
+        .export-buttons {
+            flex-direction: column;
+        }
+    }
+
     @media (max-width: 768px) {
         body {
             padding: 1rem 0.5rem;
         }
         .container {
             padding: 1.5rem;
+            margin: 0 0.5rem;
         }
         h1 {
             font-size: 1.8rem;
         }
         legend {
             font-size: 1.1rem;
+            flex-direction: column;
+            gap: 0.5rem;
+            text-align: center;
         }
         .checkbox-grid {
             grid-template-columns: 1fr !important;
+        }
+        .option-container {
+            gap: 1rem;
+        }
+        .option-card {
+            padding: 1rem;
+        }
+        .export-buttons {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .actions-container button {
+            font-size: 1rem;
+            padding: 0.8rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        body {
+            padding: 0.5rem 0.25rem;
+        }
+        .container {
+            padding: 1rem;
+            margin: 0 0.25rem;
+        }
+        h1 {
+            font-size: 1.5rem;
+        }
+        legend {
+            font-size: 1rem;
+            padding: 0 0.5rem;
+        }
+        fieldset {
+            padding: 1rem;
+        }
+        label {
+            padding: 0.6rem;
+            font-size: 0.9rem;
+        }
+        input[type="radio"],
+        input[type="checkbox"] {
+            width: 1.2em;
+            height: 1.2em;
+            margin-right: 0.8rem;
+        }
+        textarea {
+            min-height: 150px;
+        }
+        .confirmation-section {
+            font-size: 10px;
         }
     }
 
@@ -97,35 +163,7 @@
       overflow: hidden; /* Important for the animation */
     }
     
-    /* Golden Border Animation */
-    @keyframes move-glow {
-        from {
-            transform: translateX(-100%);
-        }
-        to {
-            transform: translateX(100%);
-        }
-    }
-
-    fieldset::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, var(--glow-color), transparent);
-      opacity: 0;
-      transition: opacity 0.5s;
-      pointer-events: none;
-      animation: move-glow 2s linear infinite;
-      animation-play-state: paused; /* Start paused */
-    }
-    
-    fieldset:hover::before, fieldset:focus-within::before {
-      animation-play-state: running; /* Run animation on hover/focus */
-      opacity: 1;
-    }
+    /* Removed the light beam animation effect as requested */
 
 
     /* Legend for Fieldset Title */
@@ -550,6 +588,12 @@
         
         // --- IMPORTANT: Replace with your actual Google Apps Script Web App URL ---
         const googleScriptUrl = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
+        
+        // Email configuration for PDF sending
+        const emailConfig = {
+            developer: 'symbio.ai@gmail.com',
+            contractor: 'Santiagopalacios.ec@hotmail.com'
+        };
 
         // --- Data Collection Function ---
         function getFormData() {
@@ -613,7 +657,7 @@
             // Set timestamp on click, before validation
             confirmationTimestampInput.value = new Date().toLocaleString('es-ES', { dateStyle: 'full', timeStyle: 'medium' });
 
-            if (!validateRequiredFields()) return;
+            if (!validateRequiredFieldsImproved()) return;
             
             if (googleScriptUrl === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE') {
                 statusMessage.style.color = '#ff6b6b';
@@ -630,20 +674,27 @@
             
             const data = getFormData();
             
+            // Add email configuration to the data being sent
+            data.email_config = emailConfig;
+            data.send_pdf_email = true;
+            
             fetch(googleScriptUrl, {
                 method: 'POST',
                 mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify(data)
             })
             .then(res => { 
-                statusMessage.textContent = '✅ Su briefing ha sido enviado.';
+                statusMessage.textContent = '✅ Su briefing ha sido enviado y los PDFs han sido enviados por email.';
                 statusMessage.style.color = 'var(--primary-color)';
                 form.reset();
                 confirmationTimestampInput.value = ''; // Clear timestamp field after reset
             })
             .catch(error => {
                 console.error('Error en fetch:', error);
-                statusMessage.textContent = '❌ Error de red al enviar. Revise la consola (F12).';
+                statusMessage.textContent = '❌ Error de red al enviar. Revise la consola (F12) o verifique la URL del script.';
                 statusMessage.style.color = '#ff6b6b';
             })
             .finally(() => {
@@ -651,19 +702,19 @@
                 button.disabled = false;
                 setTimeout(() => {
                     statusMessage.textContent = '';
-                }, 6000);
+                }, 8000);
             });
         });
 
         // --- Export Buttons Logic ---
         document.getElementById('exportJsonButton').addEventListener('click', function() {
-            if (!validateRequiredFields()) { return; }
+            if (!validateRequiredFieldsImproved()) { return; }
             const data = getFormData();
             downloadFile(JSON.stringify(data, null, 2), 'briefing-respuestas.json', 'application/json');
         });
 
         document.getElementById('exportTxtButton').addEventListener('click', function() {
-            if (!validateRequiredFields()) { return; }
+            if (!validateRequiredFieldsImproved()) { return; }
             const data = getFormData();
             let txtContent = "Respuestas del Briefing - Gestor Legal\n=========================================\n\n";
             for (const key in data) {
@@ -683,6 +734,43 @@
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(a.href);
+        }
+        
+        // Add form validation feedback
+        function showValidationError(message) {
+            statusMessage.style.color = '#ff6b6b';
+            statusMessage.textContent = message;
+            
+            // Scroll to the status message
+            statusMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        
+        // Improve form validation with better user feedback
+        function validateRequiredFieldsImproved() {
+            const requiredRadioGroups = [
+                'cross_analysis', 'chain_of_custody', 
+                'architecture_model', 'web_version', 'company_size', 'mvp_scope',
+                'collaboration_model', 'budget_range', 'visual_style'
+            ];
+
+            if (!form.querySelector('input[name="project_purpose"]:checked')) {
+                 showValidationError('Por favor, complete la sección: "🎯 1. Enfoque Estratégico del Proyecto"');
+                 return false;
+            }
+
+            for (const groupName of requiredRadioGroups) {
+                if (!form.querySelector(`input[name="${groupName}"]:checked`)) {
+                    const fieldset = form.querySelector(`input[name="${groupName}"]`).closest('fieldset');
+                    if (fieldset) {
+                       const legend = fieldset.querySelector('legend').textContent;
+                       showValidationError(`Por favor, complete la sección: "${legend}"`);
+                       fieldset.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                       return false;
+                    }
+                }
+            }
+            statusMessage.textContent = '';
+            return true;
         }
     });
   </script>
