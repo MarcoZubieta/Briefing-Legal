@@ -438,11 +438,12 @@
 
       <!-- Action Buttons -->
       <div class="actions-container">
-          <button type="button" id="githubSubmitButton">Enviar a GitHub (Principal)</button>
+          <!-- Main button changed to a type="button" to prevent default form submission -->
+          <button type="button" id="githubSubmitButton">Confirmar y Enviar Briefing</button>
+          
           <div class="export-buttons">
               <button type="button" id="exportJsonButton">Exportar a JSON</button>
               <button type="button" id="exportTxtButton">Exportar a TXT</button>
-              <button type="button" id="googleSheetsButton">Guardar en Google Sheets</button>
           </div>
           <div id="statusMessage"></div>
       </div>
@@ -463,40 +464,28 @@
         const form = document.getElementById('briefingForm');
         const statusMessage = document.getElementById('statusMessage');
         
-        // URL de tu Google Apps Script (reemplaza con la tuya)
-        const googleScriptUrl = 'https://script.google.com/macros/s/AKfycbxK8H9rlAqxGtxftTqgzfRbGrISJFtPdrDr67eheC_4T7X1rlex4hAvuO2snx2pqw_6/exec';
+        // --- IMPORTANT: Replace with your actual Google Apps Script Web App URL ---
+        const googleScriptUrl = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
 
         // --- Data Collection Function ---
         function getFormData() {
             const data = {};
-            
             // Process radio buttons
             form.querySelectorAll('input[type="radio"]:checked').forEach(radio => {
                 data[radio.name] = radio.value;
             });
-
-            // Process checkboxes (group by name)
+            // Process checkboxes
             const checkboxGroups = {};
             form.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-                if (!checkboxGroups[cb.name]) {
-                    checkboxGroups[cb.name] = [];
-                }
-                if (cb.checked) {
-                    checkboxGroups[cb.name].push(cb.value);
-                }
+                if (!checkboxGroups[cb.name]) checkboxGroups[cb.name] = [];
+                if (cb.checked) checkboxGroups[cb.name].push(cb.value);
             });
-            
-            // Add checkbox groups to data
             Object.keys(checkboxGroups).forEach(groupName => {
-                data[groupName] = checkboxGroups[groupName];
+                data[groupName] = checkboxGroups[groupName].length > 0 ? checkboxGroups[groupName] : false;
             });
-            
-            // Get textarea value
+            // Process textarea
             const comments = form.querySelector('textarea[name="additional_comments"]');
-            if (comments) {
-                data.additional_comments = comments.value;
-            }
-            
+            if (comments) data.additional_comments = comments.value;
             return data;
         }
 
@@ -504,60 +493,54 @@
         function validateRequiredFields() {
             const requiredRadioGroups = [
                 'project_purpose', 'cross_analysis', 'chain_of_custody', 
-                'architecture_model', 'company_size', 'mvp_scope', 
+                'architecture_model', 'company_size', 'mvp_scope',
                 'collaboration_model', 'budget_range', 'visual_style'
             ];
             
             for (const groupName of requiredRadioGroups) {
-                const checked = form.querySelector(`input[name="${groupName}"]:checked`);
-                if (!checked) {
-                    statusMessage.textContent = `Por favor, seleccione una opción para: ${groupName.replace(/_/g, ' ')}`;
+                if (!form.querySelector(`input[name="${groupName}"]:checked`)) {
+                    const legend = form.querySelector(`input[name="${groupName}"]`).closest('fieldset').querySelector('legend').textContent;
+                    statusMessage.style.color = '#ff6b6b';
+                    statusMessage.textContent = `Por favor, complete la sección: "${legend}"`;
                     return false;
                 }
             }
+            statusMessage.textContent = '';
             return true;
         }
 
         // --- Main GitHub Submit Button ---
         document.getElementById('githubSubmitButton').addEventListener('click', function() {
-            if (!validateRequiredFields()) {
+            if (!validateRequiredFields()) return;
+            
+            if (googleScriptUrl === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE') {
+                statusMessage.style.color = '#ff6b6b';
+                statusMessage.textContent = 'Error: La URL de Google Apps Script no está configurada en el HTML.';
                 return;
             }
-            
+
             const button = this;
             const originalText = button.textContent;
-            button.textContent = 'Enviando a GitHub...';
+            button.textContent = 'Enviando...';
             button.disabled = true;
+            statusMessage.style.color = 'var(--primary-color)';
             statusMessage.textContent = 'Procesando y enviando briefing...';
             
             const data = getFormData();
-            data.timestamp = new Date().toISOString();
-
-            // Enviar con POST usando fetch
+            
             fetch(googleScriptUrl, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'text/plain', // Importante para evitar preflight
-                },
+                mode: 'no-cors', // Important for simple deployments to avoid CORS preflight
                 body: JSON.stringify(data)
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(result => {
-                if (result.result === 'success') {
-                    statusMessage.textContent = '✅ ¡Briefing enviado exitosamente a GitHub!';
-                    statusMessage.style.color = 'var(--primary-color)';
-                } else {
-                    throw new Error(result.message || 'Error desconocido');
-                }
+            .then(res => { 
+                statusMessage.textContent = '✅ Su briefing ha sido enviado.';
+                statusMessage.style.color = 'var(--primary-color)';
+                form.reset();
             })
             .catch(error => {
-                console.error('Error:', error);
-                statusMessage.textContent = `❌ Error al enviar: ${error.message}`;
+                console.error('Error en fetch:', error);
+                statusMessage.textContent = '❌ Error de red al enviar. Revise la consola (F12).';
                 statusMessage.style.color = '#ff6b6b';
             })
             .finally(() => {
@@ -565,55 +548,40 @@
                 button.disabled = false;
                 setTimeout(() => {
                     statusMessage.textContent = '';
-                    statusMessage.style.color = 'var(--primary-color)';
-                }, 5000);
+                }, 6000);
             });
         });
 
-        // --- File Download Helper ---
-        function downloadFile(content, fileName, contentType) {
-            const a = document.createElement('a');
-            const file = new Blob([content], { type: contentType });
-            a.href = URL.createObjectURL(file);
-            a.download = fileName;
-            a.click();
-            URL.revokeObjectURL(a.href);
-        }
-
-        // --- Export to JSON ---
+        // --- Export Buttons Logic ---
         document.getElementById('exportJsonButton').addEventListener('click', function() {
             if (!validateRequiredFields()) { return; }
             const data = getFormData();
-            const jsonContent = JSON.stringify(data, null, 2);
-            downloadFile(jsonContent, 'briefing-respuestas.json', 'application/json');
-            statusMessage.textContent = '📁 Respuestas exportadas a JSON.';
+            downloadFile(JSON.stringify(data, null, 2), 'briefing-respuestas.json', 'application/json');
         });
 
-        // --- Export to TXT ---
         document.getElementById('exportTxtButton').addEventListener('click', function() {
             if (!validateRequiredFields()) { return; }
             const data = getFormData();
             let txtContent = "Respuestas del Briefing - Gestor Legal\n=========================================\n\n";
             for (const key in data) {
                 let formattedKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                let formattedValue = Array.isArray(data[key]) ? data[key].join(', ') : data[key];
-                txtContent += `${formattedKey}: ${formattedValue || 'No seleccionado'}\n`;
+                let formattedValue = Array.isArray(data[key]) ? data[key].join(', ') : (data[key] || 'No seleccionado');
+                txtContent += `${formattedKey}: ${formattedValue}\n`;
             }
             downloadFile(txtContent, 'briefing-respuestas.txt', 'text/plain');
-            statusMessage.textContent = '📁 Respuestas exportadas a TXT.';
         });
 
-        // --- Google Sheets Integration (backup method) ---
-        document.getElementById('googleSheetsButton').addEventListener('click', function() {
-            if (!validateRequiredFields()) { return; }
-            
-            const button = this;
-            const originalText = button.textContent;
-            button.textContent = 'Guardando...';
-            button.disabled = true;
-            statusMessage.textContent = 'Enviando respuestas a Google Sheets...';
-            
-            const data = getFormData();
-            data.timestamp = new Date().toISOString();
-
-            // Flatten array
+        function downloadFile(content, fileName, contentType) {
+            const a = document.createElement('a');
+            const file = new Blob([content], { type: contentType });
+            a.href = URL.createObjectURL(file);
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(a.href);
+        }
+    });
+  </script>
+</body>
+</html>
