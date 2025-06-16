@@ -1,0 +1,23 @@
+{
+  "cross_analysis": "required",
+  "chain_of_custody": "required",
+  "architecture_model": "modular_plugins",
+  "web_version": "web_only",
+  "company_size": "startup",
+  "mvp_scope": "esencial",
+  "collaboration_model": "part_time_3m",
+  "budget_range": "range_a",
+  "visual_style": "like_briefing",
+  "project_purpose": [
+    "repository"
+  ],
+  "legal_field": [
+    "penal"
+  ],
+  "ai_features": [
+    "ocr"
+  ],
+  "additional_comments": "",
+  "confirmation_timestamp": "lunes, 16 de junio de 2025, 9:32:16",
+  "client_name": "SANTIAGO PALACIOS"
+}
