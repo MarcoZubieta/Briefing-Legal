@@ -589,12 +589,6 @@
         // --- IMPORTANT: Replace with your actual Google Apps Script Web App URL ---
         const googleScriptUrl = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
         
-        // Email configuration for PDF sending
-        const emailConfig = {
-            developer: 'symbio.ai@gmail.com',
-            contractor: 'Santiagopalacios.ec@hotmail.com'
-        };
-
         // --- Data Collection Function ---
         function getFormData() {
             const data = {};
@@ -657,7 +651,7 @@
             // Set timestamp on click, before validation
             confirmationTimestampInput.value = new Date().toLocaleString('es-ES', { dateStyle: 'full', timeStyle: 'medium' });
 
-            if (!validateRequiredFieldsImproved()) return;
+            if (!validateRequiredFields()) return;
             
             if (googleScriptUrl === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE') {
                 statusMessage.style.color = '#ff6b6b';
@@ -674,27 +668,20 @@
             
             const data = getFormData();
             
-            // Add email configuration to the data being sent
-            data.email_config = emailConfig;
-            data.send_pdf_email = true;
-            
             fetch(googleScriptUrl, {
                 method: 'POST',
                 mode: 'no-cors',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
                 body: JSON.stringify(data)
             })
             .then(res => { 
-                statusMessage.textContent = '✅ Su briefing ha sido enviado y los PDFs han sido enviados por email.';
+                statusMessage.textContent = '✅ Su briefing ha sido enviado.';
                 statusMessage.style.color = 'var(--primary-color)';
                 form.reset();
                 confirmationTimestampInput.value = ''; // Clear timestamp field after reset
             })
             .catch(error => {
                 console.error('Error en fetch:', error);
-                statusMessage.textContent = '❌ Error de red al enviar. Revise la consola (F12) o verifique la URL del script.';
+                statusMessage.textContent = '❌ Error de red al enviar. Revise la consola (F12).';
                 statusMessage.style.color = '#ff6b6b';
             })
             .finally(() => {
@@ -702,19 +689,19 @@
                 button.disabled = false;
                 setTimeout(() => {
                     statusMessage.textContent = '';
-                }, 8000);
+                }, 6000);
             });
         });
 
         // --- Export Buttons Logic ---
         document.getElementById('exportJsonButton').addEventListener('click', function() {
-            if (!validateRequiredFieldsImproved()) { return; }
+            if (!validateRequiredFields()) { return; }
             const data = getFormData();
             downloadFile(JSON.stringify(data, null, 2), 'briefing-respuestas.json', 'application/json');
         });
 
         document.getElementById('exportTxtButton').addEventListener('click', function() {
-            if (!validateRequiredFieldsImproved()) { return; }
+            if (!validateRequiredFields()) { return; }
             const data = getFormData();
             let txtContent = "Respuestas del Briefing - Gestor Legal\n=========================================\n\n";
             for (const key in data) {
@@ -735,212 +722,7 @@
             document.body.removeChild(a);
             URL.revokeObjectURL(a.href);
         }
-        
-        // Add form validation feedback
-        function showValidationError(message) {
-            statusMessage.style.color = '#ff6b6b';
-            statusMessage.textContent = message;
-            
-            // Scroll to the status message
-            statusMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-        
-        // Improve form validation with better user feedback
-        function validateRequiredFieldsImproved() {
-            const requiredRadioGroups = [
-                'cross_analysis', 'chain_of_custody', 
-                'architecture_model', 'web_version', 'company_size', 'mvp_scope',
-                'collaboration_model', 'budget_range', 'visual_style'
-            ];
-
-            if (!form.querySelector('input[name="project_purpose"]:checked')) {
-                 showValidationError('Por favor, complete la sección: "🎯 1. Enfoque Estratégico del Proyecto"');
-                 return false;
-            }
-
-            for (const groupName of requiredRadioGroups) {
-                if (!form.querySelector(`input[name="${groupName}"]:checked`)) {
-                    const fieldset = form.querySelector(`input[name="${groupName}"]`).closest('fieldset');
-                    if (fieldset) {
-                       const legend = fieldset.querySelector('legend').textContent;
-                       showValidationError(`Por favor, complete la sección: "${legend}"`);
-                       fieldset.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                       return false;
-                    }
-                }
-            }
-            statusMessage.textContent = '';
-            return true;
-        }
     });
   </script>
 </body>
 </html>
-```
-
-Most up-to-date Immersive Artifact for "corrected_apps_script_v2" is:
-
-```javascript
-/**
- * Función principal que se ejecuta al recibir una solicitud POST desde el formulario.
- * @param {Object} e - El objeto de evento que contiene los datos enviados.
- */
-function doPost(e) {
-  try {
-    const data = JSON.parse(e.postData.contents);
-    const fecha = new Date();
-    const timestamp = fecha.toISOString().replace(/[:.]/g, "-");
-    const baseName = `briefing-${data.client_name.replace(/\s/g, '_') || 'cliente'}-${timestamp}`;
-    const folder = 'briefings'; // Carpeta dentro del repositorio de GitHub
-
-    // 1. Crear y subir el archivo JSON
-    const jsonContent = JSON.stringify(data, null, 2);
-    subirArchivoAGitHub(`${folder}/${baseName}.json`, jsonContent, `Briefing JSON de ${data.client_name}`);
-
-    // 2. Crear y subir el archivo Markdown
-    const mdContent = `
-# Briefing Legal – ${fecha.toLocaleString()}
-
-**Confirmado por:** ${data.client_name}
-**Fecha de Confirmación:** ${data.confirmation_timestamp}
-
----
-
-**🔹 Propósito del Proyecto:** ${data.project_purpose ? data.project_purpose.join(', ') : 'No especificado'}
-**🔹 Campo Legal:** ${data.legal_field ? data.legal_field.join(', ') : 'No especificado'}
-**🔹 Funciones con IA requeridas:** ${data.ai_features ? data.ai_features.join(', ') : 'Ninguna'}
-**🔹 Análisis Cruzado necesario:** ${data.cross_analysis || 'No especificado'}
-**🔹 Cadena de custodia:** ${data.chain_of_custody || 'No especificado'}
-**🔹 Modelo de arquitectura:** ${data.architecture_model || 'No especificado'}
-**🔹 Versión Web Sincronizada:** ${data.web_version || 'No especificado'}
-**🔹 Tamaño de empresa:** ${data.company_size || 'No especificado'}
-**🔹 Alcance del MVP:** ${data.mvp_scope || 'No especificado'}
-**🔹 Modelo de colaboración:** ${data.collaboration_model || 'No especificado'}
-**🔹 Presupuesto estimado:** ${data.budget_range || 'No especificado'}
-**🔹 Estilo visual:** ${data.visual_style || 'No especificado'}
-
-**🔹 Comentarios adicionales:**
-${data.additional_comments || 'Sin comentarios adicionales.'}
-`.trim();
-    subirArchivoAGitHub(`${folder}/${baseName}.md`, mdContent, `Briefing MD de ${data.client_name}`);
-
-    // 3. Generar y subir el archivo PDF, y obtener el blob para el email
-    const pdfBlob = generarPDFdesdeMarkdown(mdContent, baseName, folder);
-
-    // 4. Enviar el email de confirmación con el PDF adjunto
-    const asuntoEmail = `Confirmación de Briefing: ${data.client_name}`;
-    const cuerpoEmail = `
-      <p>Hola,</p>
-      <p>Se ha recibido un nuevo briefing para el proyecto de Gestor de Investigación Legal.</p>
-      <p><strong>Confirmado por:</strong> ${data.client_name}</p>
-      <p><strong>Fecha:</strong> ${data.confirmation_timestamp}</p>
-      <p>Los archivos han sido guardados en el repositorio de GitHub y se adjunta una copia del PDF en este correo.</p>
-      <p>Saludos,<br>Sistema Automático de Briefing</p>
-    `;
-    const destinatarios = 'Santiagopalacios.ec@hotmail.com,symbio.ai@gmail.com';
-    enviarEmailConPDF(pdfBlob, destinatarios, asuntoEmail, cuerpoEmail);
-
-
-    // 5. Retornar una respuesta de éxito al formulario
-    return ContentService.createTextOutput(JSON.stringify({ result: 'success' })).setMimeType(ContentService.MimeType.JSON);
-
-  } catch (error) {
-    Logger.log(error.toString());
-    return ContentService.createTextOutput(JSON.stringify({ result: 'error', message: error.toString() })).setMimeType(ContentService.MimeType.JSON);
-  }
-}
-
-/**
- * Genera un PDF, lo sube a GitHub y devuelve el blob del PDF.
- * @param {string} markdown - El contenido en formato Markdown.
- * @param {string} nombreArchivo - El nombre base para el archivo.
- * @param {string} folderPath - La ruta de la carpeta en GitHub.
- * @return {Blob} El blob del PDF generado.
- */
-function generarPDFdesdeMarkdown(markdown, nombreArchivo, folderPath) {
-  let doc;
-  try {
-    doc = DocumentApp.create(nombreArchivo);
-    doc.getBody().appendParagraph(markdown);
-    doc.saveAndClose();
-    
-    const pdfBlob = DriveApp.getFileById(doc.getId()).getAs(MimeType.PDF);
-    pdfBlob.setName(`${nombreArchivo}.pdf`); // Asignar nombre al blob para el adjunto
-    
-    subirArchivoAGitHub(`${folderPath}/${nombreArchivo}.pdf`, pdfBlob.getBytes(), `Crear briefing en PDF para ${nombreArchivo}`);
-    
-    return pdfBlob;
-
-  } finally {
-    if (doc) {
-      DriveApp.getFileById(doc.getId()).setTrashed(true);
-    }
-  }
-}
-
-/**
- * Envía un correo electrónico con un archivo PDF adjunto.
- * @param {Blob} pdfBlob - El archivo PDF a adjuntar.
- * @param {string} destinatarios - String con los emails de los destinatarios, separados por comas.
- * @param {string} asunto - El asunto del correo.
- * @param {string} cuerpo - El cuerpo del correo en formato HTML.
- */
-function enviarEmailConPDF(pdfBlob, destinatarios, asunto, cuerpo) {
-  try {
-    MailApp.sendEmail({
-      to: destinatarios,
-      subject: asunto,
-      htmlBody: cuerpo,
-      attachments: [pdfBlob]
-    });
-    Logger.log(`Email enviado a ${destinatarios}`);
-  } catch (error) {
-    Logger.log(`Error al enviar el email: ${error.toString()}`);
-  }
-}
-
-
-/**
- * Sube un archivo a un repositorio de GitHub usando la API de GitHub.
- * @param {string} ruta - La ruta completa del archivo en el repositorio.
- * @param {(string|byte[])} contenido - El contenido del archivo.
- * @param {string} mensajeCommit - El mensaje para el commit en GitHub.
- */
-function subirArchivoAGitHub(ruta, contenido, mensajeCommit) {
-  const githubToken = PropertiesService.getScriptProperties().getProperty('GITHUB_TOKEN');
-  
-  if (!githubToken) {
-    throw new Error("El token de GitHub no está configurado en las Propiedades del Script.");
-  }
-
-  const repo = 'MarcoZubieta/Briefing-Legal';
-  const branch = 'main';
-  const apiUrl = `https://api.github.com/repos/${repo}/contents/${ruta}`;
-  const contenidoBase64 = Utilities.base64Encode(contenido);
-  const payload = {
-    message: mensajeCommit,
-    content: contenidoBase64,
-    branch: branch
-  };
-  const options = {
-    method: "put",
-    headers: {
-      "Authorization": `Bearer ${githubToken}`,
-      "Accept": "application/vnd.github.v3+json"
-    },
-    contentType: "application/json",
-    payload: JSON.stringify(payload),
-    muteHttpExceptions: true
-  };
-
-  const response = UrlFetchApp.fetch(apiUrl, options);
-  const responseCode = response.getResponseCode();
-  const responseBody = response.getContentText();
-
-  if (responseCode >= 200 && responseCode < 300) {
-    Logger.log(`Éxito al subir ${ruta}. Respuesta: ${responseBody}`);
-  } else {
-    Logger.log(`Error al subir ${ruta}. Código: ${responseCode}. Respuesta: ${responseBody}`);
-    throw new Error(`Fallo al subir a GitHub (código ${responseCode}): ${responseBody}`);
-  }
-}
