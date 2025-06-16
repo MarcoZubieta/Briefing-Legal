@@ -353,11 +353,11 @@
       <!-- PARTE 1: NECESIDADES DEL PROYECTO -->
       <fieldset>
           <legend>🎯 1. Enfoque Estratégico del Proyecto</legend>
-          <p class="section-intro">Esta es la decisión más importante. ¿Cuál de estos tres conceptos describe mejor la herramienta que necesita?</p>
+          <p class="section-intro">Esta es la decisión más importante. ¿Cuál de estos conceptos describe mejor la herramienta que necesita? (Puede seleccionar varios).</p>
           <div class="option-container">
-            <label class="option-card"><input type="radio" name="project_purpose" value="repository" required> <div class="card-content"><h4>Opción A: Repositorio de Evidencia.</h4><p>El objetivo es organizar y resguardar notas y pruebas (PDFs, imágenes, etc.), conectándolas de forma segura.</p></div></label>
-            <label class="option-card"><input type="radio" name="project_purpose" value="investigation_platform" required> <div class="card-content"><h4>Opción B: Plataforma de Investigación Activa (OSINT).</h4><p>El objetivo es que la app sea el punto de partida de la investigación, incorporando metodologías para recopilar y analizar información de forma segura.</p></div></label>
-            <label class="option-card"><input type="radio" name="project_purpose" value="ai_augmented_platform" required> <div class="card-content"><h4>Opción C: Plataforma de Investigación Aumentada por IA.</h4><p>Un entorno cognitivo donde una IA asiste al investigador, analiza evidencia y se conecta a bases de datos, funcionando de forma local y segura.</p></div></label>
+            <label class="option-card"><input type="checkbox" name="project_purpose" value="repository"> <div class="card-content"><h4>Opción A: Repositorio de Evidencia.</h4><p>El objetivo es organizar y resguardar notas y pruebas (PDFs, imágenes, etc.), conectándolas de forma segura.</p></div></label>
+            <label class="option-card"><input type="checkbox" name="project_purpose" value="investigation_platform"> <div class="card-content"><h4>Opción B: Plataforma de Investigación Activa (OSINT).</h4><p>El objetivo es que la app sea el punto de partida de la investigación, incorporando metodologías para recopilar y analizar información de forma segura.</p></div></label>
+            <label class="option-card"><input type="checkbox" name="project_purpose" value="ai_augmented_platform"> <div class="card-content"><h4>Opción C: Plataforma de Investigación Aumentada por IA.</h4><p>Un entorno cognitivo donde una IA asiste al investigador, analiza evidencia y se conecta a bases de datos, funcionando de forma local y segura.</p></div></label>
           </div>
 
           <p class="question-title" style="margin-top: 2rem;">¿En qué ámbito(s) legal(es) se utilizará principalmente la aplicación?</p>
@@ -410,7 +410,7 @@
           <p class="question-title">En base a sus necesidades, ¿qué alcance de MVP considera más adecuado?</p>
           <div class="option-container">
               <label class="option-card"><input type="radio" name="mvp_scope" value="esencial" required><div class="card-content"><h4>Opción 1: MVP Esencial</h4><p>Para validar la idea al menor coste.</p><ul><li>Funciones básicas de repositorio</li><li>Seguridad estándar</li></ul></div></label>
-              <label class="option-card"><input type="radio" name="mvp_scope" value="balanceado" required checked><div class="card-content"><h4>Opción 2: MVP OSINT</h4><p>Herramienta de investigación activa.</p><ul><li>Funciones OSINT</li><li>Encriptación y Cadena de Custodia</li></ul></div></label>
+              <label class="option-card"><input type="radio" name="mvp_scope" value="balanceado" required><div class="card-content"><h4>Opción 2: MVP OSINT</h4><p>Herramienta de investigación activa.</p><ul><li>Funciones OSINT</li><li>Encriptación y Cadena de Custodia</li></ul></div></label>
               <label class="option-card"><input type="radio" name="mvp_scope" value="avanzado" required><div class="card-content"><h4>Opción 3: MVP con IA</h4><p>Plataforma cognitiva de vanguardia.</p><ul><li>Todas las funciones OSINT + IA (OCR, RAG)</li></ul></div></label>
           </div>
           <br>
@@ -425,7 +425,7 @@
       </fieldset>
       
       <fieldset>
-        <legend>� 5. Estilo Visual y Comentarios Finales</legend>
+        <legend>💎 5. Estilo Visual y Comentarios Finales</legend>
         <p class="question-title">¿Considera que el estilo visual de este mismo briefing (moderno, oscuro, con acentos dorados) es una buena base para el diseño de la aplicación final?</p>
         <label class="option-card"><input type="radio" name="visual_style" value="like_briefing" required><div class="card-content"> SÍ: Me gusta este estilo y lo podemos usar como una excelente referencia.</div></label>
         <label class="option-card"><input type="radio" name="visual_style" value="traditional" required><div class="card-content"> PREFIERO OTRO: Me gustaría un estilo más tradicional y sobrio (ej. tonos grises, blancos).</div></label>
@@ -439,11 +439,11 @@
 
       <!-- Action Buttons -->
       <div class="actions-container">
-          <button type="submit" id="mainSubmitButton">Confirmar y Enviar Briefing</button>
+          <button type="button" id="githubSubmitButton">Confirmar y Enviar Briefing</button>
+          
           <div class="export-buttons">
               <button type="button" id="exportJsonButton">Exportar a JSON</button>
               <button type="button" id="exportTxtButton">Exportar a TXT</button>
-              <button type="button" id="googleSheetsButton">Guardar en Google Sheets</button>
           </div>
           <div id="statusMessage"></div>
       </div>
@@ -464,133 +464,134 @@
         const form = document.getElementById('briefingForm');
         const statusMessage = document.getElementById('statusMessage');
         
-        // Main submit button (for visual confirmation)
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return;
-            }
-            statusMessage.textContent = '¡Gracias! Briefing confirmado.';
-            setTimeout(() => statusMessage.textContent = '', 4000);
-        });
+        // --- IMPORTANT: Replace with your actual Google Apps Script Web App URL ---
+        const googleScriptUrl = 'https://script.google.com/macros/s/AKfycbwfIkrw1JSXv3FpnX3W0qSNKrH6GsTxnM9tfWY0riVFDgDO6LzOmNJr6ZzYn10h0R8-/exec';
 
-        // --- Data Collection ---
+        // --- Data Collection Function ---
         function getFormData() {
             const data = {};
             // Process radio buttons
             form.querySelectorAll('input[type="radio"]:checked').forEach(radio => {
                 data[radio.name] = radio.value;
             });
-
             // Process checkboxes
+            const checkboxGroups = {};
             form.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-                if (!data[cb.name]) {
-                    data[cb.name] = []; // Initialize as array for checkboxes
-                }
-                if (cb.checked) {
-                   data[cb.name].push(cb.value);
-                }
+                if (!checkboxGroups[cb.name]) checkboxGroups[cb.name] = [];
+                if (cb.checked) checkboxGroups[cb.name].push(cb.value);
             });
-             // Clean up empty arrays for non-selected checkbox groups
-            for(const key in data){
-                if(Array.isArray(data[key]) && data[key].length === 0){
-                    data[key] = false;
-                }
-            }
-            
-            // Get textarea value
+            Object.keys(checkboxGroups).forEach(groupName => {
+                data[groupName] = checkboxGroups[groupName].length > 0 ? checkboxGroups[groupName] : false;
+            });
+            // Process textarea
             const comments = form.querySelector('textarea[name="additional_comments"]');
-            if (comments) {
-                data.additional_comments = comments.value;
-            }
-            
+            if (comments) data.additional_comments = comments.value;
             return data;
         }
 
-        // --- File Download Helper ---
-        function downloadFile(content, fileName, contentType) {
-            const a = document.createElement('a');
-            const file = new Blob([content], { type: contentType });
-            a.href = URL.createObjectURL(file);
-            a.download = fileName;
-            a.click();
-            URL.revokeObjectURL(a.href);
+        // --- Validation Function ---
+        function validateRequiredFields() {
+            // Checkbox groups can be optional, so we only validate radio buttons
+            const requiredRadioGroups = [
+                'cross_analysis', 'chain_of_custody', 
+                'architecture_model', 'company_size', 'mvp_scope',
+                'collaboration_model', 'budget_range', 'visual_style'
+            ];
+             // The first question group is now checkbox, so it's not strictly required to select one.
+             // We can add a check if we want at least one to be selected.
+            if (!form.querySelector('input[name="project_purpose"]:checked')) {
+                 statusMessage.style.color = '#ff6b6b';
+                 statusMessage.textContent = `Por favor, complete la sección: "🎯 1. Enfoque Estratégico del Proyecto"`;
+                 return false;
+            }
+
+            for (const groupName of requiredRadioGroups) {
+                if (!form.querySelector(`input[name="${groupName}"]:checked`)) {
+                    const fieldset = form.querySelector(`input[name="${groupName}"]`).closest('fieldset');
+                    if (fieldset) {
+                       const legend = fieldset.querySelector('legend').textContent;
+                       statusMessage.style.color = '#ff6b6b';
+                       statusMessage.textContent = `Por favor, complete la sección: "${legend}"`;
+                       return false;
+                    }
+                }
+            }
+            statusMessage.textContent = '';
+            return true;
         }
 
-        // --- Export to JSON ---
-        document.getElementById('exportJsonButton').addEventListener('click', function() {
-            if (!form.checkValidity()) { form.reportValidity(); return; }
-            const data = getFormData();
-            const jsonContent = JSON.stringify(data, null, 2);
-            downloadFile(jsonContent, 'briefing-respuestas.json', 'application/json');
-            statusMessage.textContent = 'Respuestas exportadas a JSON.';
-        });
-
-        // --- Export to TXT ---
-        document.getElementById('exportTxtButton').addEventListener('click', function() {
-            if (!form.checkValidity()) { form.reportValidity(); return; }
-            const data = getFormData();
-            let txtContent = "Respuestas del Briefing - Gestor Legal\n=========================================\n\n";
-            for (const key in data) {
-                let formattedKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                let formattedValue = Array.isArray(data[key]) ? data[key].join(', ') : data[key];
-                txtContent += `${formattedKey}: ${formattedValue || 'No seleccionado'}\n`;
-            }
-            downloadFile(txtContent, 'briefing-respuestas.txt', 'text/plain');
-            statusMessage.textContent = 'Respuestas exportadas a TXT.';
-        });
-
-        // --- Google Sheets Integration ---
-        document.getElementById('googleSheetsButton').addEventListener('click', function() {
-            if (!form.checkValidity()) { form.reportValidity(); return; }
+        // --- Main GitHub Submit Button ---
+        document.getElementById('githubSubmitButton').addEventListener('click', function() {
+            if (!validateRequiredFields()) return;
             
-            // !!! IMPORTANT: Replace with your actual Google Apps Script Web App URL !!!
-            const googleScriptUrl = 'https://script.google.com/macros/s/AKfycbwfIkrw1JSXv3FpnX3W0qSNKrH6GsTxnM9tfWY0riVFDgDO6LzOmNJr6ZzYn10h0R8-/exec';
-
-            if (googleScriptUrl === 'https://script.google.com/macros/s/AKfycbwfIkrw1JSXv3FpnX3W0qSNKrH6GsTxnM9tfWY0riVFDgDO6LzOmNJr6ZzYn10h0R8-/exec') {
-                statusMessage.textContent = 'Error: La URL de Google Sheets no está configurada.';
-                alert('Por favor, configura la URL del script de Google Apps en el código HTML para habilitar esta función.');
+            if (googleScriptUrl === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE') {
+                statusMessage.style.color = '#ff6b6b';
+                statusMessage.textContent = 'Error: La URL de Google Apps Script no está configurada en el HTML.';
                 return;
             }
 
             const button = this;
             const originalText = button.textContent;
-            button.textContent = 'Guardando...';
+            button.textContent = 'Enviando...';
             button.disabled = true;
-            statusMessage.textContent = 'Enviando respuestas a Google Sheets...';
+            statusMessage.style.color = 'var(--primary-color)';
+            statusMessage.textContent = 'Procesando y enviando briefing...';
             
             const data = getFormData();
-            data.timestamp = new Date().toISOString();
-
-            // Flatten array values for Sheets
-            const flatData = {};
-            for(const key in data){
-                if(Array.isArray(data[key])){
-                    flatData[key] = data[key].join(', ');
-                } else {
-                    flatData[key] = data[key];
-                }
-            }
-
+            
             fetch(googleScriptUrl, {
                 method: 'POST',
-                mode: 'no-cors', // Important for simple Apps Script deployments
-                cache: 'no-cache',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(flatData)
+                mode: 'no-cors',
+                body: JSON.stringify(data)
             })
-            .then(res => {
-                statusMessage.textContent = '¡Respuestas guardadas en Google Sheets con éxito!';
+            .then(res => { 
+                statusMessage.textContent = '✅ Su briefing ha sido enviado.';
+                statusMessage.style.color = 'var(--primary-color)';
+                form.reset();
             })
             .catch(error => {
-                console.error('Error sending to Google Sheets:', error);
-                statusMessage.textContent = 'Error al guardar. Revisa la consola para más detalles.';
-            }).finally(() => {
+                console.error('Error en fetch:', error);
+                statusMessage.textContent = '❌ Error de red al enviar. Revise la consola (F12).';
+                statusMessage.style.color = '#ff6b6b';
+            })
+            .finally(() => {
                 button.textContent = originalText;
                 button.disabled = false;
+                setTimeout(() => {
+                    statusMessage.textContent = '';
+                }, 6000);
             });
         });
+
+        // --- Export Buttons Logic ---
+        document.getElementById('exportJsonButton').addEventListener('click', function() {
+            if (!validateRequiredFields()) { return; }
+            const data = getFormData();
+            downloadFile(JSON.stringify(data, null, 2), 'briefing-respuestas.json', 'application/json');
+        });
+
+        document.getElementById('exportTxtButton').addEventListener('click', function() {
+            if (!validateRequiredFields()) { return; }
+            const data = getFormData();
+            let txtContent = "Respuestas del Briefing - Gestor Legal\n=========================================\n\n";
+            for (const key in data) {
+                let formattedKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                let formattedValue = Array.isArray(data[key]) ? data[key].join(', ') : (data[key] || 'No seleccionado');
+                txtContent += `${formattedKey}: ${formattedValue}\n`;
+            }
+            downloadFile(txtContent, 'briefing-respuestas.txt', 'text/plain');
+        });
+
+        function downloadFile(content, fileName, contentType) {
+            const a = document.createElement('a');
+            const file = new Blob([content], { type: contentType });
+            a.href = URL.createObjectURL(file);
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(a.href);
+        }
     });
   </script>
 </body>
