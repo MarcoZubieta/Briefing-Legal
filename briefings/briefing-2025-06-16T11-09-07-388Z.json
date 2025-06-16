@@ -1,0 +1,27 @@
+{
+  "cross_analysis": "required",
+  "chain_of_custody": "required",
+  "architecture_model": "modular_plugins",
+  "company_size": "pyme",
+  "mvp_scope": "balanceado",
+  "collaboration_model": "part_time_3m",
+  "budget_range": "range_a",
+  "visual_style": "like_briefing",
+  "project_purpose": [
+    "repository",
+    "investigation_platform"
+  ],
+  "legal_field": [
+    "penal",
+    "civil",
+    "comercial",
+    "empresarial",
+    "privado",
+    "otro"
+  ],
+  "ai_features": [
+    "ocr",
+    "audio_analytics"
+  ],
+  "additional_comments": ""
+}
