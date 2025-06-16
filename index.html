@@ -593,5 +593,40 @@
         });
     });
   </script>
+
+<script>
+function enviarBriefing() {
+  const respuestas = {
+    project_purpose: document.querySelector("#project_purpose").value,
+    legal_field: document.querySelector("#legal_field").value,
+    ai_features: document.querySelector("#ai_features").value,
+    cross_analysis: document.querySelector("#cross_analysis").value,
+    chain_of_custody: document.querySelector("#chain_of_custody").value,
+    architecture_model: document.querySelector("#architecture_model").value,
+    company_size: document.querySelector("#company_size").value,
+    mvp_scope: document.querySelector("#mvp_scope").value,
+    collaboration_model: document.querySelector("#collaboration_model").value,
+    budget_range: document.querySelector("#budget_range").value,
+    visual_style: document.querySelector("#visual_style").value,
+    additional_comments: document.querySelector("#additional_comments").value
+  };
+
+  fetch(googleScriptUrl, {
+    method: 'POST',
+    body: JSON.stringify(respuestas),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  })
+  .then(res => res.text())
+  .then(msg => {
+    alert("✅ Briefing enviado correctamente a GitHub");
+  })
+  .catch(err => {
+    alert("❌ Error al enviar el briefing.");
+    console.error(err);
+  });
+}
+</script>
 </body>
 </html>
