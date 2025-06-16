@@ -59,6 +59,9 @@
         legend {
             font-size: 1.1rem;
         }
+        .checkbox-grid {
+            grid-template-columns: 1fr !important;
+        }
     }
 
 
@@ -94,22 +97,34 @@
       overflow: hidden; /* Important for the animation */
     }
     
-    /* Golden Arrow/Border Animation */
+    /* Golden Border Animation */
+    @keyframes move-glow {
+        from {
+            transform: translateX(-100%);
+        }
+        to {
+            transform: translateX(100%);
+        }
+    }
+
     fieldset::before {
       content: '';
       position: absolute;
       top: 0;
-      left: -100%;
+      left: 0;
       width: 100%;
       height: 100%;
       background: linear-gradient(90deg, transparent, var(--glow-color), transparent);
-      transition: 0.5s;
+      opacity: 0;
+      transition: opacity 0.5s;
       pointer-events: none;
+      animation: move-glow 2s linear infinite;
+      animation-play-state: paused; /* Start paused */
     }
     
     fieldset:hover::before, fieldset:focus-within::before {
-      left: 100%;
-      transition: 1s;
+      animation-play-state: running; /* Run animation on hover/focus */
+      opacity: 1;
     }
 
 
@@ -299,15 +314,28 @@
     }
     
     /* Confirmation Section */
-    .confirmation-section input {
-        width: 100%;
-        background: var(--bg-surface);
-        border: 1px solid var(--border-color-base);
-        color: var(--text-main);
-        padding: 0.5rem 1rem;
-        border-radius: 6px;
+    .confirmation-section {
+        text-transform: uppercase;
+        font-size: 11px;
+        letter-spacing: 0.5px;
+        color: var(--text-secondary);
+        line-height: 2;
+    }
+    
+    .confirmation-section .client-name {
+        color: var(--gold-color);
+        font-weight: 700;
+    }
+    
+    .confirmation-section input[name="confirmation_timestamp"] {
+        background: none;
+        border: none;
+        color: var(--text-secondary);
         font-family: 'Poppins', sans-serif;
-        box-sizing: border-box;
+        font-size: 11px;
+        text-transform: uppercase;
+        padding: 0;
+        width: 100%;
     }
 
     /* Action Buttons Container */
@@ -406,7 +434,7 @@
           </div>
 
           <p class="question-title" style="margin-top: 2rem;">¿En qué ámbito(s) legal(es) se utilizará principalmente la aplicación?</p>
-           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+           <div class="checkbox-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
                 <label><input type="checkbox" name="legal_field" value="penal"> Penal</label>
                 <label><input type="checkbox" name="legal_field" value="civil"> Civil</label>
                 <label><input type="checkbox" name="legal_field" value="comercial"> Comercial</label>
@@ -434,9 +462,14 @@
         <label><input type="radio" name="chain_of_custody" value="required" required> <strong>Cadena de Custodia:</strong> SÍ, es indispensable registrar de forma inalterable la obtención de cada prueba para garantizar su validez judicial.</label>
         <label><input type="radio" name="chain_of_custody" value="not_required" required> <strong>Cadena de Custodia:</strong> NO, un registro simple es suficiente por ahora.</label>
 
-        <p class="question-title">🧩 Arquitectura y Crecimiento Futuro</p>
+        <p class="question-title">🧩 Arquitectura y Servicios Adicionales</p>
         <label><input type="radio" name="architecture_model" value="modular_plugins" required> <strong>Arquitectura Modular (Plugins):</strong> Prefiero una aplicación base sólida que pueda crecer en el futuro añadiendo nuevas funcionalidades como "plugins" de pago. Esto me permite empezar con una inversión controlada y pagar solo por lo que necesito, cuando lo necesito.</label>
         <label><input type="radio" name="architecture_model" value="monolithic" required> <strong>Aplicación Monolítica:</strong> Prefiero que todas las funcionalidades posibles se incluyan en el desarrollo inicial, aunque la inversión sea mayor al principio.</label>
+        <br>
+        <p class="question-title" style="margin-bottom: 0.5rem;">🌐 Web y Hosting</p>
+        <label><input type="radio" name="web_version" value="web_only" required> <strong>Versión Web de la App:</strong> Sería conveniente una versión sincronizada de la app en su espejo web, para garantizar portabilidad y resiliencia.</label>
+        <label><input type="radio" name="web_version" value="web_plus_hosting" required> <strong>Versión Web + Hosting:</strong> Sería conveniente una versión web más hosting y dominio como servicios adicionales.</label>
+        <label><input type="radio" name="web_version" value="later" required> <strong>No es necesario al presente:</strong> Podría agregarse más adelante.</label>
       </fieldset>
       
       <!-- PARTE 2: CONTEXTO DEL NEGOCIO -->
@@ -482,8 +515,7 @@
 
         <p class="question-title" style="margin-top: 2rem;">Confirmación Final</p>
         <div class="confirmation-section">
-            <p class="option-description">Yo, <input type="text" name="client_name" value="Santiago Palacios" required>, actualizo los requerimientos del software a contratar en la fecha y hora:</p>
-            <input type="text" name="confirmation_timestamp" readonly>
+            <p>YO, <span class="client-name">SANTIAGO PALACIOS</span>, ACTUALIZO LOS REQUERIMIENTOS DEL SOFTWARE A CONTRATAR EN FECHA Y HORA: <input type="text" name="confirmation_timestamp" readonly></p>
         </div>
       </fieldset>
 
@@ -517,7 +549,7 @@
         const confirmationTimestampInput = form.querySelector('input[name="confirmation_timestamp"]');
         
         // --- IMPORTANT: Replace with your actual Google Apps Script Web App URL ---
-        const googleScriptUrl = 'https://script.google.com/macros/s/AKfycbwfIkrw1JSXv3FpnX3W0qSNKrH6GsTxnM9tfWY0riVFDgDO6LzOmNJr6ZzYn10h0R8-/exec';
+        const googleScriptUrl = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
 
         // --- Data Collection Function ---
         function getFormData() {
@@ -537,8 +569,13 @@
             });
             // Process textarea and text inputs
             form.querySelectorAll('textarea, input[type="text"]').forEach(input => {
-                data[input.name] = input.value;
+                // Ensure we don't overwrite existing data from radio/checkbox with same name
+                if(!data.hasOwnProperty(input.name)) {
+                   data[input.name] = input.value;
+                }
             });
+            // Add fixed client name
+            data.client_name = "SANTIAGO PALACIOS";
             return data;
         }
 
@@ -546,7 +583,7 @@
         function validateRequiredFields() {
             const requiredRadioGroups = [
                 'cross_analysis', 'chain_of_custody', 
-                'architecture_model', 'company_size', 'mvp_scope',
+                'architecture_model', 'web_version', 'company_size', 'mvp_scope',
                 'collaboration_model', 'budget_range', 'visual_style'
             ];
 
@@ -566,11 +603,6 @@
                        return false;
                     }
                 }
-            }
-            if(form.querySelector('input[name="client_name"]').value.trim() === '') {
-                 statusMessage.style.color = '#ff6b6b';
-                 statusMessage.textContent = 'Por favor, ingrese su nombre para la confirmación final.';
-                 return false;
             }
             statusMessage.textContent = '';
             return true;
@@ -656,3 +688,171 @@
   </script>
 </body>
 </html>
+```
+
+Most up-to-date Immersive Artifact for "corrected_apps_script_v2" is:
+
+```javascript
+/**
+ * Función principal que se ejecuta al recibir una solicitud POST desde el formulario.
+ * @param {Object} e - El objeto de evento que contiene los datos enviados.
+ */
+function doPost(e) {
+  try {
+    const data = JSON.parse(e.postData.contents);
+    const fecha = new Date();
+    const timestamp = fecha.toISOString().replace(/[:.]/g, "-");
+    const baseName = `briefing-${data.client_name.replace(/\s/g, '_') || 'cliente'}-${timestamp}`;
+    const folder = 'briefings'; // Carpeta dentro del repositorio de GitHub
+
+    // 1. Crear y subir el archivo JSON
+    const jsonContent = JSON.stringify(data, null, 2);
+    subirArchivoAGitHub(`${folder}/${baseName}.json`, jsonContent, `Briefing JSON de ${data.client_name}`);
+
+    // 2. Crear y subir el archivo Markdown
+    const mdContent = `
+# Briefing Legal – ${fecha.toLocaleString()}
+
+**Confirmado por:** ${data.client_name}
+**Fecha de Confirmación:** ${data.confirmation_timestamp}
+
+---
+
+**🔹 Propósito del Proyecto:** ${data.project_purpose ? data.project_purpose.join(', ') : 'No especificado'}
+**🔹 Campo Legal:** ${data.legal_field ? data.legal_field.join(', ') : 'No especificado'}
+**🔹 Funciones con IA requeridas:** ${data.ai_features ? data.ai_features.join(', ') : 'Ninguna'}
+**🔹 Análisis Cruzado necesario:** ${data.cross_analysis || 'No especificado'}
+**🔹 Cadena de custodia:** ${data.chain_of_custody || 'No especificado'}
+**🔹 Modelo de arquitectura:** ${data.architecture_model || 'No especificado'}
+**🔹 Versión Web Sincronizada:** ${data.web_version || 'No especificado'}
+**🔹 Tamaño de empresa:** ${data.company_size || 'No especificado'}
+**🔹 Alcance del MVP:** ${data.mvp_scope || 'No especificado'}
+**🔹 Modelo de colaboración:** ${data.collaboration_model || 'No especificado'}
+**🔹 Presupuesto estimado:** ${data.budget_range || 'No especificado'}
+**🔹 Estilo visual:** ${data.visual_style || 'No especificado'}
+
+**🔹 Comentarios adicionales:**
+${data.additional_comments || 'Sin comentarios adicionales.'}
+`.trim();
+    subirArchivoAGitHub(`${folder}/${baseName}.md`, mdContent, `Briefing MD de ${data.client_name}`);
+
+    // 3. Generar y subir el archivo PDF, y obtener el blob para el email
+    const pdfBlob = generarPDFdesdeMarkdown(mdContent, baseName, folder);
+
+    // 4. Enviar el email de confirmación con el PDF adjunto
+    const asuntoEmail = `Confirmación de Briefing: ${data.client_name}`;
+    const cuerpoEmail = `
+      <p>Hola,</p>
+      <p>Se ha recibido un nuevo briefing para el proyecto de Gestor de Investigación Legal.</p>
+      <p><strong>Confirmado por:</strong> ${data.client_name}</p>
+      <p><strong>Fecha:</strong> ${data.confirmation_timestamp}</p>
+      <p>Los archivos han sido guardados en el repositorio de GitHub y se adjunta una copia del PDF en este correo.</p>
+      <p>Saludos,<br>Sistema Automático de Briefing</p>
+    `;
+    const destinatarios = 'Santiagopalacios.ec@hotmail.com,symbio.ai@gmail.com';
+    enviarEmailConPDF(pdfBlob, destinatarios, asuntoEmail, cuerpoEmail);
+
+
+    // 5. Retornar una respuesta de éxito al formulario
+    return ContentService.createTextOutput(JSON.stringify({ result: 'success' })).setMimeType(ContentService.MimeType.JSON);
+
+  } catch (error) {
+    Logger.log(error.toString());
+    return ContentService.createTextOutput(JSON.stringify({ result: 'error', message: error.toString() })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+/**
+ * Genera un PDF, lo sube a GitHub y devuelve el blob del PDF.
+ * @param {string} markdown - El contenido en formato Markdown.
+ * @param {string} nombreArchivo - El nombre base para el archivo.
+ * @param {string} folderPath - La ruta de la carpeta en GitHub.
+ * @return {Blob} El blob del PDF generado.
+ */
+function generarPDFdesdeMarkdown(markdown, nombreArchivo, folderPath) {
+  let doc;
+  try {
+    doc = DocumentApp.create(nombreArchivo);
+    doc.getBody().appendParagraph(markdown);
+    doc.saveAndClose();
+    
+    const pdfBlob = DriveApp.getFileById(doc.getId()).getAs(MimeType.PDF);
+    pdfBlob.setName(`${nombreArchivo}.pdf`); // Asignar nombre al blob para el adjunto
+    
+    subirArchivoAGitHub(`${folderPath}/${nombreArchivo}.pdf`, pdfBlob.getBytes(), `Crear briefing en PDF para ${nombreArchivo}`);
+    
+    return pdfBlob;
+
+  } finally {
+    if (doc) {
+      DriveApp.getFileById(doc.getId()).setTrashed(true);
+    }
+  }
+}
+
+/**
+ * Envía un correo electrónico con un archivo PDF adjunto.
+ * @param {Blob} pdfBlob - El archivo PDF a adjuntar.
+ * @param {string} destinatarios - String con los emails de los destinatarios, separados por comas.
+ * @param {string} asunto - El asunto del correo.
+ * @param {string} cuerpo - El cuerpo del correo en formato HTML.
+ */
+function enviarEmailConPDF(pdfBlob, destinatarios, asunto, cuerpo) {
+  try {
+    MailApp.sendEmail({
+      to: destinatarios,
+      subject: asunto,
+      htmlBody: cuerpo,
+      attachments: [pdfBlob]
+    });
+    Logger.log(`Email enviado a ${destinatarios}`);
+  } catch (error) {
+    Logger.log(`Error al enviar el email: ${error.toString()}`);
+  }
+}
+
+
+/**
+ * Sube un archivo a un repositorio de GitHub usando la API de GitHub.
+ * @param {string} ruta - La ruta completa del archivo en el repositorio.
+ * @param {(string|byte[])} contenido - El contenido del archivo.
+ * @param {string} mensajeCommit - El mensaje para el commit en GitHub.
+ */
+function subirArchivoAGitHub(ruta, contenido, mensajeCommit) {
+  const githubToken = PropertiesService.getScriptProperties().getProperty('GITHUB_TOKEN');
+  
+  if (!githubToken) {
+    throw new Error("El token de GitHub no está configurado en las Propiedades del Script.");
+  }
+
+  const repo = 'MarcoZubieta/Briefing-Legal';
+  const branch = 'main';
+  const apiUrl = `https://api.github.com/repos/${repo}/contents/${ruta}`;
+  const contenidoBase64 = Utilities.base64Encode(contenido);
+  const payload = {
+    message: mensajeCommit,
+    content: contenidoBase64,
+    branch: branch
+  };
+  const options = {
+    method: "put",
+    headers: {
+      "Authorization": `Bearer ${githubToken}`,
+      "Accept": "application/vnd.github.v3+json"
+    },
+    contentType: "application/json",
+    payload: JSON.stringify(payload),
+    muteHttpExceptions: true
+  };
+
+  const response = UrlFetchApp.fetch(apiUrl, options);
+  const responseCode = response.getResponseCode();
+  const responseBody = response.getContentText();
+
+  if (responseCode >= 200 && responseCode < 300) {
+    Logger.log(`Éxito al subir ${ruta}. Respuesta: ${responseBody}`);
+  } else {
+    Logger.log(`Error al subir ${ruta}. Código: ${responseCode}. Respuesta: ${responseBody}`);
+    throw new Error(`Fallo al subir a GitHub (código ${responseCode}): ${responseBody}`);
+  }
+}
