@@ -410,7 +410,7 @@
           <p class="question-title">En base a sus necesidades, ¿qué alcance de MVP considera más adecuado?</p>
           <div class="option-container">
               <label class="option-card"><input type="radio" name="mvp_scope" value="esencial" required><div class="card-content"><h4>Opción 1: MVP Esencial</h4><p>Para validar la idea al menor coste.</p><ul><li>Funciones básicas de repositorio</li><li>Seguridad estándar</li></ul></div></label>
-              <label class="option-card"><input type="radio" name="mvp_scope" value="balanceado" required><div class="card-content"><h4>Opción 2: MVP OSINT</h4><p>Herramienta de investigación activa.</p><ul><li>Funciones OSINT</li><li>Encriptación y Cadena de Custodia</li></ul></div></label>
+              <label class="option-card"><input type="radio" name="mvp_scope" value="balanceado" required checked><div class="card-content"><h4>Opción 2: MVP OSINT</h4><p>Herramienta de investigación activa.</p><ul><li>Funciones OSINT</li><li>Encriptación y Cadena de Custodia</li></ul></div></label>
               <label class="option-card"><input type="radio" name="mvp_scope" value="avanzado" required><div class="card-content"><h4>Opción 3: MVP con IA</h4><p>Plataforma cognitiva de vanguardia.</p><ul><li>Todas las funciones OSINT + IA (OCR, RAG)</li></ul></div></label>
           </div>
           <br>
@@ -425,7 +425,7 @@
       </fieldset>
       
       <fieldset>
-        <legend>💎 5. Estilo Visual y Comentarios Finales</legend>
+        <legend>� 5. Estilo Visual y Comentarios Finales</legend>
         <p class="question-title">¿Considera que el estilo visual de este mismo briefing (moderno, oscuro, con acentos dorados) es una buena base para el diseño de la aplicación final?</p>
         <label class="option-card"><input type="radio" name="visual_style" value="like_briefing" required><div class="card-content"> SÍ: Me gusta este estilo y lo podemos usar como una excelente referencia.</div></label>
         <label class="option-card"><input type="radio" name="visual_style" value="traditional" required><div class="card-content"> PREFIERO OTRO: Me gustaría un estilo más tradicional y sobrio (ej. tonos grises, blancos).</div></label>
@@ -436,14 +436,14 @@
         <textarea name="additional_comments" placeholder="Escriba aquí sus comentarios..."></textarea>
       </fieldset>
 
+
       <!-- Action Buttons -->
       <div class="actions-container">
-          <!-- Main button changed to a type="button" to prevent default form submission -->
-          <button type="button" id="githubSubmitButton">Confirmar y Enviar Briefing</button>
-          
+          <button type="submit" id="mainSubmitButton">Confirmar y Enviar Briefing</button>
           <div class="export-buttons">
               <button type="button" id="exportJsonButton">Exportar a JSON</button>
               <button type="button" id="exportTxtButton">Exportar a TXT</button>
+              <button type="button" id="googleSheetsButton">Guardar en Google Sheets</button>
           </div>
           <div id="statusMessage"></div>
       </div>
@@ -464,123 +464,133 @@
         const form = document.getElementById('briefingForm');
         const statusMessage = document.getElementById('statusMessage');
         
-        // --- IMPORTANT: Replace with your actual Google Apps Script Web App URL ---
-        const googleScriptUrl = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
+        // Main submit button (for visual confirmation)
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            statusMessage.textContent = '¡Gracias! Briefing confirmado. Ahora puedes exportar o guardar tus respuestas.';
+            setTimeout(() => statusMessage.textContent = '', 4000);
+        });
 
-        // --- Data Collection Function ---
+        // --- Data Collection ---
         function getFormData() {
             const data = {};
             // Process radio buttons
             form.querySelectorAll('input[type="radio"]:checked').forEach(radio => {
                 data[radio.name] = radio.value;
             });
+
             // Process checkboxes
-            const checkboxGroups = {};
             form.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-                if (!checkboxGroups[cb.name]) checkboxGroups[cb.name] = [];
-                if (cb.checked) checkboxGroups[cb.name].push(cb.value);
+                if (!data[cb.name]) {
+                    data[cb.name] = []; // Initialize as array for checkboxes
+                }
+                if (cb.checked) {
+                   data[cb.name].push(cb.value);
+                }
             });
-            Object.keys(checkboxGroups).forEach(groupName => {
-                data[groupName] = checkboxGroups[groupName].length > 0 ? checkboxGroups[groupName] : false;
-            });
-            // Process textarea
+             // Clean up empty arrays for non-selected checkbox groups
+            for(const key in data){
+                if(Array.isArray(data[key]) && data[key].length === 0){
+                    data[key] = false;
+                }
+            }
+            
+            // Get textarea value
             const comments = form.querySelector('textarea[name="additional_comments"]');
-            if (comments) data.additional_comments = comments.value;
+            if (comments) {
+                data.additional_comments = comments.value;
+            }
+            
             return data;
         }
 
-        // --- Validation Function ---
-        function validateRequiredFields() {
-            const requiredRadioGroups = [
-                'project_purpose', 'cross_analysis', 'chain_of_custody', 
-                'architecture_model', 'company_size', 'mvp_scope',
-                'collaboration_model', 'budget_range', 'visual_style'
-            ];
-            
-            for (const groupName of requiredRadioGroups) {
-                if (!form.querySelector(`input[name="${groupName}"]:checked`)) {
-                    const legend = form.querySelector(`input[name="${groupName}"]`).closest('fieldset').querySelector('legend').textContent;
-                    statusMessage.style.color = '#ff6b6b';
-                    statusMessage.textContent = `Por favor, complete la sección: "${legend}"`;
-                    return false;
-                }
-            }
-            statusMessage.textContent = '';
-            return true;
-        }
-
-        // --- Main GitHub Submit Button ---
-        document.getElementById('githubSubmitButton').addEventListener('click', function() {
-            if (!validateRequiredFields()) return;
-            
-            if (googleScriptUrl === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE') {
-                statusMessage.style.color = '#ff6b6b';
-                statusMessage.textContent = 'Error: La URL de Google Apps Script no está configurada en el HTML.';
-                return;
-            }
-
-            const button = this;
-            const originalText = button.textContent;
-            button.textContent = 'Enviando...';
-            button.disabled = true;
-            statusMessage.style.color = 'var(--primary-color)';
-            statusMessage.textContent = 'Procesando y enviando briefing...';
-            
-            const data = getFormData();
-            
-            fetch(googleScriptUrl, {
-                method: 'POST',
-                mode: 'no-cors', // Important for simple deployments to avoid CORS preflight
-                body: JSON.stringify(data)
-            })
-            .then(res => { 
-                statusMessage.textContent = '✅ Su briefing ha sido enviado.';
-                statusMessage.style.color = 'var(--primary-color)';
-                form.reset();
-            })
-            .catch(error => {
-                console.error('Error en fetch:', error);
-                statusMessage.textContent = '❌ Error de red al enviar. Revise la consola (F12).';
-                statusMessage.style.color = '#ff6b6b';
-            })
-            .finally(() => {
-                button.textContent = originalText;
-                button.disabled = false;
-                setTimeout(() => {
-                    statusMessage.textContent = '';
-                }, 6000);
-            });
-        });
-
-        // --- Export Buttons Logic ---
-        document.getElementById('exportJsonButton').addEventListener('click', function() {
-            if (!validateRequiredFields()) { return; }
-            const data = getFormData();
-            downloadFile(JSON.stringify(data, null, 2), 'briefing-respuestas.json', 'application/json');
-        });
-
-        document.getElementById('exportTxtButton').addEventListener('click', function() {
-            if (!validateRequiredFields()) { return; }
-            const data = getFormData();
-            let txtContent = "Respuestas del Briefing - Gestor Legal\n=========================================\n\n";
-            for (const key in data) {
-                let formattedKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                let formattedValue = Array.isArray(data[key]) ? data[key].join(', ') : (data[key] || 'No seleccionado');
-                txtContent += `${formattedKey}: ${formattedValue}\n`;
-            }
-            downloadFile(txtContent, 'briefing-respuestas.txt', 'text/plain');
-        });
-
+        // --- File Download Helper ---
         function downloadFile(content, fileName, contentType) {
             const a = document.createElement('a');
             const file = new Blob([content], { type: contentType });
             a.href = URL.createObjectURL(file);
             a.download = fileName;
-            document.body.appendChild(a);
             a.click();
-            document.body.removeChild(a);
             URL.revokeObjectURL(a.href);
         }
+
+        // --- Export to JSON ---
+        document.getElementById('exportJsonButton').addEventListener('click', function() {
+            if (!form.checkValidity()) { form.reportValidity(); return; }
+            const data = getFormData();
+            const jsonContent = JSON.stringify(data, null, 2);
+            downloadFile(jsonContent, 'briefing-respuestas.json', 'application/json');
+            statusMessage.textContent = 'Respuestas exportadas a JSON.';
+        });
+
+        // --- Export to TXT ---
+        document.getElementById('exportTxtButton').addEventListener('click', function() {
+            if (!form.checkValidity()) { form.reportValidity(); return; }
+            const data = getFormData();
+            let txtContent = "Respuestas del Briefing - Gestor Legal\n=========================================\n\n";
+            for (const key in data) {
+                let formattedKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                let formattedValue = Array.isArray(data[key]) ? data[key].join(', ') : data[key];
+                txtContent += `${formattedKey}: ${formattedValue || 'No seleccionado'}\n`;
+            }
+            downloadFile(txtContent, 'briefing-respuestas.txt', 'text/plain');
+            statusMessage.textContent = 'Respuestas exportadas a TXT.';
+        });
+
+        // --- Google Sheets Integration ---
+        document.getElementById('googleSheetsButton').addEventListener('click', function() {
+            if (!form.checkValidity()) { form.reportValidity(); return; }
+            
+            // !!! IMPORTANT: Replace with your actual Google Apps Script Web App URL !!!
+            const googleScriptUrl = 'https://script.google.com/macros/s/AKfycbwfIkrw1JSXv3FpnX3W0qSNKrH6GsTxnM9tfWY0riVFDgDO6LzOmNJr6ZzYn10h0R8-/exec';
+
+            if (googleScriptUrl === 'https://script.google.com/macros/s/AKfycbwfIkrw1JSXv3FpnX3W0qSNKrH6GsTxnM9tfWY0riVFDgDO6LzOmNJr6ZzYn10h0R8-/exec') {
+                statusMessage.textContent = 'Error: La URL de Google Sheets no está configurada.';
+                alert('Por favor, configura la URL del script de Google Apps en el código HTML para habilitar esta función.');
+                return;
+            }
+
+            const button = this;
+            const originalText = button.textContent;
+            button.textContent = 'Guardando...';
+            button.disabled = true;
+            statusMessage.textContent = 'Enviando respuestas a Google Sheets...';
+            
+            const data = getFormData();
+            data.timestamp = new Date().toISOString();
+
+            // Flatten array values for Sheets
+            const flatData = {};
+            for(const key in data){
+                if(Array.isArray(data[key])){
+                    flatData[key] = data[key].join(', ');
+                } else {
+                    flatData[key] = data[key];
+                }
+            }
+
+            fetch(googleScriptUrl, {
+                method: 'POST',
+                mode: 'no-cors', // Important for simple Apps Script deployments
+                cache: 'no-cache',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(flatData)
+            })
+            .then(res => {
+                statusMessage.textContent = '¡Respuestas guardadas en Google Sheets con éxito!';
+            })
+            .catch(error => {
+                console.error('Error sending to Google Sheets:', error);
+                statusMessage.textContent = 'Error al guardar. Revisa la consola para más detalles.';
+            }).finally(() => {
+                button.textContent = originalText;
+                button.disabled = false;
+            });
+        });
     });
   </script>
 </body>
