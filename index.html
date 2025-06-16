@@ -45,6 +45,23 @@
       overflow: hidden;
     }
 
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        body {
+            padding: 1rem 0.5rem;
+        }
+        .container {
+            padding: 1.5rem;
+        }
+        h1 {
+            font-size: 1.8rem;
+        }
+        legend {
+            font-size: 1.1rem;
+        }
+    }
+
+
     /* Header Section */
     header {
       text-align: center;
@@ -73,12 +90,28 @@
       border-radius: 12px;
       padding: 1.5rem;
       margin-bottom: 2.5rem;
-      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden; /* Important for the animation */
     }
     
-    fieldset:hover {
-      box-shadow: 0 0 15px var(--glow-color);
+    /* Golden Arrow/Border Animation */
+    fieldset::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, var(--glow-color), transparent);
+      transition: 0.5s;
+      pointer-events: none;
     }
+    
+    fieldset:hover::before, fieldset:focus-within::before {
+      left: 100%;
+      transition: 1s;
+    }
+
 
     /* Legend for Fieldset Title */
     legend {
@@ -104,7 +137,6 @@
       transition: background-color 0.2s ease;
       font-weight: 300;
       position: relative;
-      overflow: hidden;
     }
     
     label strong {
@@ -256,6 +288,7 @@
         font-size: 1rem;
         min-height: 250px;
         resize: vertical;
+        box-sizing: border-box; /* Fixes overflow issue */
         transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
 
@@ -263,6 +296,18 @@
         outline: none;
         border-color: var(--gold-color);
         box-shadow: 0 0 15px -5px var(--glow-color);
+    }
+    
+    /* Confirmation Section */
+    .confirmation-section input {
+        width: 100%;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-color-base);
+        color: var(--text-main);
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-family: 'Poppins', sans-serif;
+        box-sizing: border-box;
     }
 
     /* Action Buttons Container */
@@ -425,7 +470,7 @@
       </fieldset>
       
       <fieldset>
-        <legend>💎 5. Estilo Visual y Comentarios Finales</legend>
+        <legend>💎 5. Estilo Visual y Confirmación</legend>
         <p class="question-title">¿Considera que el estilo visual de este mismo briefing (moderno, oscuro, con acentos dorados) es una buena base para el diseño de la aplicación final?</p>
         <label class="option-card"><input type="radio" name="visual_style" value="like_briefing" required><div class="card-content"> SÍ: Me gusta este estilo y lo podemos usar como una excelente referencia.</div></label>
         <label class="option-card"><input type="radio" name="visual_style" value="traditional" required><div class="card-content"> PREFIERO OTRO: Me gustaría un estilo más tradicional y sobrio (ej. tonos grises, blancos).</div></label>
@@ -434,6 +479,12 @@
         <p class="question-title" style="margin-top: 2rem;">Comentarios Adicionales</p>
         <p class="option-description">Si hay algún aspecto importante que no hayamos cubierto, por favor, detállelo aquí.</p>
         <textarea name="additional_comments" placeholder="Escriba aquí sus comentarios..."></textarea>
+
+        <p class="question-title" style="margin-top: 2rem;">Confirmación Final</p>
+        <div class="confirmation-section">
+            <p class="option-description">Yo, <input type="text" name="client_name" value="Santiago Palacios" required>, actualizo los requerimientos del software a contratar en la fecha y hora:</p>
+            <input type="text" name="confirmation_timestamp" readonly>
+        </div>
       </fieldset>
 
 
@@ -463,6 +514,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         const form = document.getElementById('briefingForm');
         const statusMessage = document.getElementById('statusMessage');
+        const confirmationTimestampInput = form.querySelector('input[name="confirmation_timestamp"]');
         
         // --- IMPORTANT: Replace with your actual Google Apps Script Web App URL ---
         const googleScriptUrl = 'https://script.google.com/macros/s/AKfycbwfIkrw1JSXv3FpnX3W0qSNKrH6GsTxnM9tfWY0riVFDgDO6LzOmNJr6ZzYn10h0R8-/exec';
@@ -483,22 +535,21 @@
             Object.keys(checkboxGroups).forEach(groupName => {
                 data[groupName] = checkboxGroups[groupName].length > 0 ? checkboxGroups[groupName] : false;
             });
-            // Process textarea
-            const comments = form.querySelector('textarea[name="additional_comments"]');
-            if (comments) data.additional_comments = comments.value;
+            // Process textarea and text inputs
+            form.querySelectorAll('textarea, input[type="text"]').forEach(input => {
+                data[input.name] = input.value;
+            });
             return data;
         }
 
         // --- Validation Function ---
         function validateRequiredFields() {
-            // Checkbox groups can be optional, so we only validate radio buttons
             const requiredRadioGroups = [
                 'cross_analysis', 'chain_of_custody', 
                 'architecture_model', 'company_size', 'mvp_scope',
                 'collaboration_model', 'budget_range', 'visual_style'
             ];
-             // The first question group is now checkbox, so it's not strictly required to select one.
-             // We can add a check if we want at least one to be selected.
+
             if (!form.querySelector('input[name="project_purpose"]:checked')) {
                  statusMessage.style.color = '#ff6b6b';
                  statusMessage.textContent = `Por favor, complete la sección: "🎯 1. Enfoque Estratégico del Proyecto"`;
@@ -516,12 +567,20 @@
                     }
                 }
             }
+            if(form.querySelector('input[name="client_name"]').value.trim() === '') {
+                 statusMessage.style.color = '#ff6b6b';
+                 statusMessage.textContent = 'Por favor, ingrese su nombre para la confirmación final.';
+                 return false;
+            }
             statusMessage.textContent = '';
             return true;
         }
 
         // --- Main GitHub Submit Button ---
         document.getElementById('githubSubmitButton').addEventListener('click', function() {
+            // Set timestamp on click, before validation
+            confirmationTimestampInput.value = new Date().toLocaleString('es-ES', { dateStyle: 'full', timeStyle: 'medium' });
+
             if (!validateRequiredFields()) return;
             
             if (googleScriptUrl === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE') {
@@ -548,6 +607,7 @@
                 statusMessage.textContent = '✅ Su briefing ha sido enviado.';
                 statusMessage.style.color = 'var(--primary-color)';
                 form.reset();
+                confirmationTimestampInput.value = ''; // Clear timestamp field after reset
             })
             .catch(error => {
                 console.error('Error en fetch:', error);
