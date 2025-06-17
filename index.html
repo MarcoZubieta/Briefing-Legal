@@ -35,9 +35,27 @@
             <p class="question-title">¿Cuál es el propósito fundamental de la aplicación? (Puede seleccionar varios)</p>
             <div class="option-container">
               <!-- Checkbox con label asociado para accesibilidad -->
-              <label class="option-card" for="purpose-repository"><input type="checkbox" id="purpose-repository" name="project_purpose" value="repository"> <div class="card-content"><h4>Opción A: Repositorio de Evidencia.</h4><p>El objetivo es organizar y resguardar notas y pruebas (PDFs, imágenes, etc.), conectándolas de forma segura.</p></div></label>
-              <label class="option-card" for="purpose-investigation"><input type="checkbox" id="purpose-investigation" name="project_purpose" value="investigation_platform"> <div class="card-content"><h4>Opción B: Plataforma de Investigación Activa (OSINT).</h4><p>El objetivo es que la app sea el punto de partida de la investigación, incorporando metodologías para recopilar y analizar información de forma segura.</p></div></label>
-              <label class="option-card" for="purpose-ai"><input type="checkbox" id="purpose-ai" name="project_purpose" value="ai_augmented_platform"> <div class="card-content"><h4>Opción C: Plataforma de Investigación Aumentada por IA.</h4><p>Un entorno cognitivo donde una IA asiste al investigador, analiza evidencia y se conecta a bases de datos, funcionando de forma local y segura.</p></div></label>
+              <label class="option-card" for="purpose-repository">
+                <input type="checkbox" id="purpose-repository" name="project_purpose" value="repository">
+                <div class="card-content">
+                  <h4>Opción A: Repositorio de Evidencia.</h4>
+                  <p>El objetivo es organizar y resguardar notas y pruebas (PDFs, imágenes, etc.), conectándolas de forma segura.</p>
+                </div>
+              </label>
+              <label class="option-card" for="purpose-investigation">
+                <input type="checkbox" id="purpose-investigation" name="project_purpose" value="investigation_platform">
+                <div class="card-content">
+                  <h4>Opción B: Plataforma de Investigación Activa (OSINT).</h4>
+                  <p>El objetivo es que la app sea el punto de partida de la investigación, incorporando metodologías para recopilar y analizar información de forma segura.</p>
+                </div>
+              </label>
+              <label class="option-card" for="purpose-ai">
+                <input type="checkbox" id="purpose-ai" name="project_purpose" value="ai_augmented_platform">
+                <div class="card-content">
+                  <h4>Opción C: Plataforma de Investigación Aumentada por IA.</h4>
+                  <p>Un entorno cognitivo donde una IA asiste al investigador, analiza evidencia y se conecta a bases de datos, funcionando de forma local y segura.</p>
+                </div>
+              </label>
             </div>
           </div>
           <div class="question-group">
@@ -118,9 +136,38 @@
           <div class="question-group">
             <p class="question-title">En base a sus necesidades, ¿qué alcance de MVP considera más adecuado?</p>
             <div class="option-container">
-                <label class="option-card" for="mvp-esencial"><input type="radio" id="mvp-esencial" name="mvp_scope" value="esencial" required><div class="card-content"><h4>Opción 1: MVP Esencial</h4><p>Para validar la idea al menor coste.</p><ul><li>Funciones básicas de repositorio</li><li>Seguridad estándar</li></ul></div></label>
-                <label class="option-card" for="mvp-balanceado"><input type="radio" id="mvp-balanceado" name="mvp_scope" value="balanceado" required><div class="card-content"><h4>Opción 2: MVP OSINT</h4><p>Herramienta de investigación activa.</p><ul><li>Funciones OSINT</li><li>Encriptación y Cadena de Custodia</li></ul></div></label>
-                <label class="option-card" for="mvp-avanzado"><input type="radio" id="mvp-avanzado" name="mvp_scope" value="avanzado" required><div class="card-content"><h4>Opción 3: MVP con IA</h4><p>Plataforma cognitiva de vanguardia.</p><ul><li>Todas las funciones OSINT + IA (OCR, RAG)</li></ul></div></label>
+                <label class="option-card" for="mvp-esencial">
+                  <input type="radio" id="mvp-esencial" name="mvp_scope" value="esencial" required>
+                  <div class="card-content">
+                    <h4>Opción 1: MVP Esencial</h4>
+                    <p>Para validar la idea al menor coste.</p>
+                    <ul>
+                      <li>Funciones básicas de repositorio</li>
+                      <li>Seguridad estándar</li>
+                    </ul>
+                  </div>
+                </label>
+                <label class="option-card" for="mvp-balanceado">
+                  <input type="radio" id="mvp-balanceado" name="mvp_scope" value="balanceado" required>
+                  <div class="card-content">
+                    <h4>Opción 2: MVP OSINT</h4>
+                    <p>Herramienta de investigación activa.</p>
+                    <ul>
+                      <li>Funciones OSINT</li>
+                      <li>Encriptación y Cadena de Custodia</li>
+                    </ul>
+                  </div>
+                </label>
+                <label class="option-card" for="mvp-avanzado">
+                  <input type="radio" id="mvp-avanzado" name="mvp_scope" value="avanzado" required>
+                  <div class="card-content">
+                    <h4>Opción 3: MVP con IA</h4>
+                    <p>Plataforma cognitiva de vanguardia.</p>
+                    <ul>
+                      <li>Todas las funciones OSINT + IA (OCR, RAG)</li>
+                    </ul>
+                  </div>
+                </label>
             </div>
           </div>
           <div class="question-group">
