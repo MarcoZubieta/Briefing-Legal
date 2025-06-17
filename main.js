@@ -9,6 +9,7 @@ window.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('briefingForm');
     const exportPdfButton = document.getElementById('exportPdfButton');
     const exportTxtButton = document.getElementById('exportTxtButton');
+    const githubSubmitButton = document.getElementById('githubSubmitButton');
     const txtModal = document.getElementById('txtModal');
     const txtPreview = document.getElementById('txtPreview');
     const closeTxtModal = document.getElementById('closeTxtModal');
@@ -136,4 +137,88 @@ window.addEventListener('DOMContentLoaded', function () {
         document.body.removeChild(a);
         URL.revokeObjectURL(a.href);
     });
-}); 
+
+    // =============================
+    // Enviar Briefing por Email y GitHub
+    // =============================
+    githubSubmitButton.addEventListener('click', async function(e) {
+        e.preventDefault();
+        
+        if (!validateRequiredFields()) {
+            return;
+        }
+
+        // Verificar si briefingSender está disponible
+        if (typeof window.briefingSender === 'undefined') {
+            statusMessage.style.color = '#ff6b6b';
+            statusMessage.textContent = 'Error: Módulo de envío no está cargado. Recarga la página e intenta de nuevo.';
+            return;
+        }
+
+        // Deshabilitar el botón durante el envío
+        githubSubmitButton.style.pointerEvents = 'none';
+        githubSubmitButton.style.opacity = '0.6';
+        
+        // Mostrar mensaje de carga
+        statusMessage.style.color = '#FFD700';
+        statusMessage.textContent = '⏳ Enviando briefing... Por favor espera.';
+
+        try {
+            // Obtener datos del formulario
+            const formData = getFormData();
+            
+            // Agregar timestamp de confirmación
+            formData.confirmation_timestamp = new Date().toLocaleString('es-ES');
+            if (confirmationTimestampInput) {
+                confirmationTimestampInput.value = formData.confirmation_timestamp;
+            }
+
+            // Enviar briefing
+            const results = await window.briefingSender.sendBriefing(formData);
+
+            // Mostrar resultados
+            let successMessage = '✅ Briefing procesado:\n';
+            let hasErrors = false;
+
+            if (results.emailsSent.length > 0) {
+                successMessage += `📧 Emails enviados a: ${results.emailsSent.join(', ')}\n`;
+            }
+
+            if (results.githubSaved) {
+                successMessage += '📂 Guardado en GitHub exitosamente\n';
+            }
+
+            if (results.errors.length > 0) {
+                hasErrors = true;
+                successMessage += '\n⚠️ Errores encontrados:\n' + results.errors.join('\n');
+            }
+
+            statusMessage.style.color = hasErrors ? '#ff9800' : '#4CAF50';
+            statusMessage.innerHTML = successMessage.replace(/\n/g, '<br>');
+
+            // Si todo fue exitoso, mostrar mensaje adicional
+            if (!hasErrors && results.emailsSent.length === 2 && results.githubSaved) {
+                setTimeout(() => {
+                    statusMessage.innerHTML += '<br><br>🎉 ¡Briefing enviado completamente! Ambas partes han recibido la información y se ha guardado en el repositorio.';
+                }, 2000);
+            }
+
+        } catch (error) {
+            console.error('Error enviando briefing:', error);
+            statusMessage.style.color = '#ff6b6b';
+            statusMessage.textContent = `❌ Error: ${error.message}`;
+        } finally {
+            // Rehabilitar el botón
+            githubSubmitButton.style.pointerEvents = 'auto';
+            githubSubmitButton.style.opacity = '1';
+        }
+    });
+
+    // =============================
+    // Configurar timestamp automático
+    // =============================
+    if (confirmationTimestampInput) {
+        const now = new Date().toLocaleString('es-ES');
+        confirmationTimestampInput.value = now;
+    }
+});
