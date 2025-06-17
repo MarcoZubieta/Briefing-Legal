@@ -8,425 +8,185 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <!-- Font Awesome for Icons -->
+  <!-- Font Awesome para iconos -->
   <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
-
-  <style>
-    :root {
-      --bg-main: #0a0a0a;
-      --bg-surface: #1a1a1a;
-      --primary-color: #03dac6;
-      --secondary-color: #bb86fc;
-      --gold-color: #FFD700;
-      --glow-color: rgba(255, 215, 0, 0.5);
-      --text-main: #FFFFFF;
-      --text-secondary: #B3B3B3;
-      --border-color-base: #2c2c2c;
-    }
-
-    /* General Body Styling */
-    body {
-      font-family: 'Poppins', sans-serif;
-      background-color: var(--bg-main);
-      color: var(--text-main);
-      padding: 2rem 1rem;
-      line-height: 1.6;
-    }
-
-    /* Main Container for the Form */
-    .container {
-      max-width: 900px;
-      margin: auto;
-      background-color: var(--bg-surface);
-      padding: 2.5rem;
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      border: 1px solid var(--border-color-base);
-      overflow: hidden;
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-        body { padding: 1rem 0.5rem; }
-        .container { padding: 1.5rem; margin: 0 0.5rem; }
-        h1 { font-size: 1.8rem; }
-        legend { font-size: 1.1rem; }
-        .checkbox-grid { grid-template-columns: 1fr !important; }
-    }
-
-    @media (max-width: 480px) {
-        body { padding: 0.5rem 0.25rem; }
-        .container { padding: 1rem; margin: 0 0.25rem; }
-        h1 { font-size: 1.5rem; }
-        legend { font-size: 1rem; }
-        fieldset { padding: 1rem; }
-        .label-item { font-size: 0.9rem; }
-    }
-
-    /* Header Section */
-    header {
-      text-align: center;
-      margin-bottom: 2.5rem;
-      border-bottom: 1px solid var(--border-color-base);
-      padding-bottom: 1.5rem;
-    }
-
-    h1 {
-      font-weight: 700;
-      color: var(--primary-color);
-      font-size: 2.2rem;
-      margin-bottom: 0.5rem;
-    }
-
-    header p {
-      font-size: 1rem;
-      color: var(--text-secondary);
-      max-width: 700px;
-      margin: auto;
-    }
-
-    /* Fieldset for grouping questions */
-    fieldset {
-      border: 1px solid var(--gold-color);
-      border-radius: 12px;
-      padding: 1.5rem;
-      margin-bottom: 2.5rem;
-      position: relative;
-      transition: box-shadow 0.3s ease-in-out;
-    }
-    
-    fieldset:hover, fieldset:focus-within {
-      box-shadow: 0 0 15px var(--glow-color);
-    }
-    
-    /* Legend for Fieldset Title */
-    legend {
-      font-weight: 600;
-      font-size: 1.3rem;
-      color: var(--gold-color);
-      padding: 0 0.8rem;
-      margin-left: 0.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.7rem;
-    }
-
-    /* Structure for questions */
-    .question-group {
-        margin-bottom: 2rem;
-    }
-    .question-group:last-child {
-        margin-bottom: 0;
-    }
-    
-    .question-title {
-        font-weight: 600;
-        color: var(--text-main);
-        margin-bottom: 1rem;
-        padding-left: 0.5rem;
-    }
-
-    /* General Label Styling */
-    .label-item {
-      display: flex;
-      align-items: flex-start;
-      margin-bottom: 1rem;
-      padding: 0.8rem;
-      background-color: rgba(255, 255, 255, 0.05);
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background-color 0.2s ease;
-      font-weight: 300;
-      position: relative;
-    }
-    
-    .label-item strong {
-        color: var(--primary-color);
-        font-weight: 600;
-    }
-    
-    .label-content {
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .label-title {
-        font-weight: 600;
-    }
-
-    .label-description {
-        font-size: 0.9rem;
-        color: var(--text-secondary);
-        margin-top: 0.25rem;
-    }
-
-    /* Custom Radio and Checkbox Styling */
-    input[type="radio"],
-    input[type="checkbox"] {
-      -webkit-appearance: none;
-      appearance: none;
-      background-color: var(--bg-main);
-      margin-right: 1rem;
-      font: inherit;
-      color: var(--primary-color);
-      width: 1.5em;
-      height: 1.5em;
-      border: 0.15em solid var(--primary-color);
-      border-radius: 50%;
-      transform: translateY(0.1em);
-      display: grid;
-      place-content: center;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-    
-    input[type="checkbox"] {
-      border-radius: 0.3em;
-    }
-
-    input[type="radio"]::before {
-      content: ""; width: 0.8em; height: 0.8em;
-      border-radius: 50%;
-      transform: scale(0);
-      transition: 120ms transform ease-in-out;
-      box-shadow: inset 1em 1em var(--primary-color);
-    }
-    
-    input[type="checkbox"]::before {
-      content: ""; width: 0.8em; height: 0.8em;
-      transform: scale(0);
-      transition: 120ms transform ease-in-out;
-      box-shadow: inset 1em 1em var(--primary-color);
-      transform-origin: bottom left;
-      clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
-    }
-
-    input[type="radio"]:checked::before,
-    input[type="checkbox"]:checked::before {
-      transform: scale(1);
-    }
-    
-    /* Option Cards */
-    .option-container {
-        display: flex; flex-direction: column; gap: 1.5rem;
-    }
-    .option-card {
-        padding: 1.5rem;
-        border: 1px solid var(--border-color-base);
-        transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    }
-    .option-card:hover,
-    .option-card:has(input:checked) {
-       border-color: var(--gold-color);
-       box-shadow: 0 0 20px -5px var(--glow-color);
-    }
-    .card-content h4 {
-        font-size: 1.1rem; font-weight: 600; color: var(--primary-color);
-        margin-top: 0; margin-bottom: 0.5rem;
-    }
-    .card-content p {
-        font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;
-    }
-    
-    /* Textarea and Confirmation */
-    textarea {
-        width: 100%; background-color: rgba(255, 255, 255, 0.05);
-        border: 1px solid var(--border-color-base); border-radius: 6px;
-        padding: 1rem; color: var(--text-main); font-family: 'Poppins', sans-serif;
-        font-size: 1rem; min-height: 250px; resize: vertical;
-        box-sizing: border-box; transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    }
-    textarea:focus {
-        outline: none; border-color: var(--gold-color);
-        box-shadow: 0 0 15px -5px var(--glow-color);
-    }
-    .confirmation-section {
-        text-transform: uppercase; font-size: 11px;
-        letter-spacing: 0.5px; color: var(--text-secondary); line-height: 2;
-    }
-    .confirmation-section .client-name { color: var(--gold-color); font-weight: 700; }
-    .confirmation-section input[name="confirmation_timestamp"] {
-        background: none; border: none; color: var(--text-secondary);
-        font-family: 'Poppins', sans-serif; font-size: 11px;
-        text-transform: uppercase; padding: 0; width: 100%;
-    }
-
-    /* Buttons & Actions */
-    .actions-container {
-        margin-top: 2.5rem; display: flex; flex-direction: column;
-        align-items: center; gap: 1.5rem;
-    }
-    .neon-button {
-        position: relative; display: inline-block; padding: 15px 30px;
-        color: var(--gold-color); background: none; border: 2px solid var(--gold-color);
-        border-radius: 8px; text-transform: uppercase; text-decoration: none;
-        letter-spacing: 2px; font-size: 1.2rem; font-weight: 700;
-        overflow: hidden; transition: 0.5s; cursor: pointer;
-    }
-    .neon-button:hover {
-        background: var(--gold-color); color: #050801;
-        box-shadow: 0 0 5px var(--gold-color), 0 0 25px var(--gold-color),
-                    0 0 50px var(--gold-color), 0 0 100px var(--gold-color);
-    }
-    .neon-button span { position: absolute; display: block; }
-    .neon-button span:nth-child(1) { top: 0; left: -100%; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--gold-color)); animation: animate1 1s linear infinite; }
-    @keyframes animate1 { 0% { left: -100%; } 50%, 100% { left: 100%; } }
-    .neon-button span:nth-child(2) { top: -100%; right: 0; width: 2px; height: 100%; background: linear-gradient(180deg, transparent, var(--gold-color)); animation: animate2 1s linear infinite; animation-delay: 0.25s; }
-    @keyframes animate2 { 0% { top: -100%; } 50%, 100% { top: 100%; } }
-    .neon-button span:nth-child(3) { bottom: 0; right: -100%; width: 100%; height: 2px; background: linear-gradient(270deg, transparent, var(--gold-color)); animation: animate3 1s linear infinite; animation-delay: 0.5s; }
-    @keyframes animate3 { 0% { right: -100%; } 50%, 100% { right: 100%; } }
-    .neon-button span:nth-child(4) { bottom: -100%; left: 0; width: 2px; height: 100%; background: linear-gradient(360deg, transparent, var(--gold-color)); animation: animate4 1s linear infinite; animation-delay: 0.75s; }
-    @keyframes animate4 { 0% { bottom: -100%; } 50%, 100% { bottom: 100%; } }
-    .export-buttons { display: flex; gap: 1rem; justify-content: center; }
-    .export-buttons button {
-        background: transparent; border: 2px solid var(--gold-color); color: var(--gold-color);
-        font-size: 0.9rem; font-weight: 600; padding: 0.5rem 1rem; border-radius: 8px;
-        cursor: pointer; transition: all 0.3s ease;
-    }
-    .export-buttons button:hover { background: var(--gold-color); color: var(--bg-surface); }
-    
-    #statusMessage { text-align: center; margin-top: 1rem; min-height: 20px; color: var(--primary-color); transition: opacity 0.3s ease; }
-    .closing-signature { text-align: center; margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border-color-base); color: var(--text-secondary); }
-  </style>
+  <!-- Enlace a hoja de estilos externa -->
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
+  <!-- Contenedor principal -->
   <div class="container">
     <header>
       <h1>Briefing: Gestor de Investigación Legal</h1>
       <p>Este formulario nos ayudará a definir con precisión el alcance del proyecto. Por favor, seleccione la opción que mejor se ajuste a sus necesidades para esta primera etapa del desarrollo.</p>
     </header>
 
-    <form id="briefingForm">
+    <!-- Formulario principal -->
+    <form id="briefingForm" novalidate>
+    <!-- novalidate permite personalizar la validación con JS, pero los campos tendrán validación HTML5 -->
     
+      <!-- =============================== -->
+      <!-- 1. Enfoque Estratégico del Proyecto -->
+      <!-- =============================== -->
       <fieldset>
           <legend>🎯 1. Enfoque Estratégico del Proyecto</legend>
           <div class="question-group">
             <p class="question-title">¿Cuál es el propósito fundamental de la aplicación? (Puede seleccionar varios)</p>
             <div class="option-container">
-              <label class="option-card"><input type="checkbox" name="project_purpose" value="repository"> <div class="card-content"><h4>Opción A: Repositorio de Evidencia.</h4><p>El objetivo es organizar y resguardar notas y pruebas (PDFs, imágenes, etc.), conectándolas de forma segura.</p></div></label>
-              <label class="option-card"><input type="checkbox" name="project_purpose" value="investigation_platform"> <div class="card-content"><h4>Opción B: Plataforma de Investigación Activa (OSINT).</h4><p>El objetivo es que la app sea el punto de partida de la investigación, incorporando metodologías para recopilar y analizar información de forma segura.</p></div></label>
-              <label class="option-card"><input type="checkbox" name="project_purpose" value="ai_augmented_platform"> <div class="card-content"><h4>Opción C: Plataforma de Investigación Aumentada por IA.</h4><p>Un entorno cognitivo donde una IA asiste al investigador, analiza evidencia y se conecta a bases de datos, funcionando de forma local y segura.</p></div></label>
+              <!-- Checkbox con label asociado para accesibilidad -->
+              <label class="option-card" for="purpose-repository"><input type="checkbox" id="purpose-repository" name="project_purpose" value="repository"> <div class="card-content"><h4>Opción A: Repositorio de Evidencia.</h4><p>El objetivo es organizar y resguardar notas y pruebas (PDFs, imágenes, etc.), conectándolas de forma segura.</p></div></label>
+              <label class="option-card" for="purpose-investigation"><input type="checkbox" id="purpose-investigation" name="project_purpose" value="investigation_platform"> <div class="card-content"><h4>Opción B: Plataforma de Investigación Activa (OSINT).</h4><p>El objetivo es que la app sea el punto de partida de la investigación, incorporando metodologías para recopilar y analizar información de forma segura.</p></div></label>
+              <label class="option-card" for="purpose-ai"><input type="checkbox" id="purpose-ai" name="project_purpose" value="ai_augmented_platform"> <div class="card-content"><h4>Opción C: Plataforma de Investigación Aumentada por IA.</h4><p>Un entorno cognitivo donde una IA asiste al investigador, analiza evidencia y se conecta a bases de datos, funcionando de forma local y segura.</p></div></label>
             </div>
           </div>
           <div class="question-group">
             <p class="question-title" style="margin-top: 2rem;">¿En qué ámbito(s) legal(es) se utilizará principalmente la aplicación?</p>
              <div class="checkbox-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
-                  <label class="label-item"><input type="checkbox" name="legal_field" value="penal"> Penal</label>
-                  <label class="label-item"><input type="checkbox" name="legal_field" value="civil"> Civil</label>
-                  <label class="label-item"><input type="checkbox" name="legal_field" value="comercial"> Comercial</label>
-                  <label class="label-item"><input type="checkbox" name="legal_field" value="empresarial"> Empresarial / Corporativo</label>
-                  <label class="label-item"><input type="checkbox" name="legal_field" value="privado"> Investigación Privada</label>
-                  <label class="label-item"><input type="checkbox" name="legal_field" value="otro"> Otro</label>
+                  <!-- Cada checkbox tiene un id y label asociado para accesibilidad -->
+                  <label class="label-item" for="field-penal"><input type="checkbox" id="field-penal" name="legal_field" value="penal"> Penal</label>
+                  <label class="label-item" for="field-civil"><input type="checkbox" id="field-civil" name="legal_field" value="civil"> Civil</label>
+                  <label class="label-item" for="field-comercial"><input type="checkbox" id="field-comercial" name="legal_field" value="comercial"> Comercial</label>
+                  <label class="label-item" for="field-empresarial"><input type="checkbox" id="field-empresarial" name="legal_field" value="empresarial"> Empresarial / Corporativo</label>
+                  <label class="label-item" for="field-privado"><input type="checkbox" id="field-privado" name="legal_field" value="privado"> Investigación Privada</label>
+                  <label class="label-item" for="field-otro"><input type="checkbox" id="field-otro" name="legal_field" value="otro"> Otro</label>
              </div>
           </div>
       </fieldset>
 
+      <!-- =============================== -->
+      <!-- 2. Prioridades Funcionales y Técnicas -->
+      <!-- =============================== -->
       <fieldset>
         <legend>🛠️ 2. Prioridades Funcionales y Técnicas</legend>
         
         <div class="question-group">
             <p class="question-title">📋 Funcionalidades Clave y Datos</p>
-            <label class="label-item"><input type="radio" name="confirm_fields" value="yes" required><div class="label-content"><span class="label-title"><strong>Confirmación de Campos:</strong></span><span class="label-description">Confirmamos que los campos iniciales serán: <strong>CUERPO, FOJA, PÁGINA DEL PDF y OBSERVACIÓN.</strong></span></div></label>
-            <label class="label-item"><input type="radio" name="confirm_fields" value="no" required><div class="label-content"><span class="label-title"><strong>Confirmación de Campos:</strong></span><span class="label-description">No, necesitaremos definir otros campos de datos.</span></div></label>
+            <!-- Radios con id y label for para accesibilidad y validación HTML5 -->
+            <label class="label-item" for="fields-yes"><input type="radio" id="fields-yes" name="confirm_fields" value="yes" required><div class="label-content"><span class="label-title"><strong>Confirmación de Campos:</strong></span><span class="label-description">Confirmamos que los campos iniciales serán: <strong>CUERPO, FOJA, PÁGINA DEL PDF y OBSERVACIÓN.</strong></span></div></label>
+            <label class="label-item" for="fields-no"><input type="radio" id="fields-no" name="confirm_fields" value="no" required><div class="label-content"><span class="label-title"><strong>Confirmación de Campos:</strong></span><span class="label-description">No, necesitaremos definir otros campos de datos.</span></div></label>
             
-            <label class="label-item"><input type="radio" name="excel_export" value="required" required><div class="label-content"><span class="label-title"><strong>Exportación a Excel:</strong></span><span class="label-description">SÍ, la capacidad de exportar los registros a un archivo .xlsx es fundamental.</span></div></label>
-            <label class="label-item"><input type="radio" name="excel_export" value="not_required" required><div class="label-content"><span class="label-title"><strong>Exportación a Excel:</strong></span><span class="label-description">NO, no es una prioridad para el MVP.</span></div></label>
+            <label class="label-item" for="excel-yes"><input type="radio" id="excel-yes" name="excel_export" value="required" required><div class="label-content"><span class="label-title"><strong>Exportación a Excel:</strong></span><span class="label-description">SÍ, la capacidad de exportar los registros a un archivo .xlsx es fundamental.</span></div></label>
+            <label class="label-item" for="excel-no"><input type="radio" id="excel-no" name="excel_export" value="not_required" required><div class="label-content"><span class="label-title"><strong>Exportación a Excel:</strong></span><span class="label-description">NO, no es una prioridad para el MVP.</span></div></label>
 
-            <label class="label-item"><input type="radio" name="data_migration" value="required" required><div class="label-content"><span class="label-title"><strong>Migración de Datos Existentes:</strong></span><span class="label-description">SÍ, tengo información en archivos de Word, Excel o PDFs que necesito importar al nuevo sistema.</span></div></label>
-            <label class="label-item"><input type="radio" name="data_migration" value="not_required" required><div class="label-content"><span class="label-title"><strong>Migración de Datos Existentes:</strong></span><span class="label-description">NO, empezaré desde cero en la nueva aplicación.</span></div></label>
+            <label class="label-item" for="migration-yes"><input type="radio" id="migration-yes" name="data_migration" value="required" required><div class="label-content"><span class="label-title"><strong>Migración de Datos Existentes:</strong></span><span class="label-description">SÍ, tengo información en archivos de Word, Excel o PDFs que necesito importar al nuevo sistema.</span></div></label>
+            <label class="label-item" for="migration-no"><input type="radio" id="migration-no" name="data_migration" value="not_required" required><div class="label-content"><span class="label-title"><strong>Migración de Datos Existentes:</strong></span><span class="label-description">NO, empezaré desde cero en la nueva aplicación.</span></div></label>
         </div>
 
         <div class="question-group">
           <p class="question-title">🧠 Análisis Avanzado de Evidencia (IA y Multimedia)</p>
-          <label class="label-item"><input type="checkbox" name="ai_features" value="ocr"><div class="label-content"><span class="label-title"><strong>OCR:</strong></span><span class="label-description">Extraer texto automáticamente de documentos escaneados e imágenes.</span></div></label>
-          <label class="label-item"><input type="checkbox" name="ai_features" value="audio_analytics"><div class="label-content"><span class="label-title"><strong>Análisis de Audio:</strong></span><span class="label-description">Transcribir grabaciones de audio a texto.</span></div></label>
-          <label class="label-item"><input type="checkbox" name="ai_features" value="computer_vision"><div class="label-content"><span class="label-title"><strong>Visión por Computador:</strong></span><span class="label-description">Analizar imágenes/videos para detectar objetos o personas.</span></div></label>
+          <label class="label-item" for="ai-ocr"><input type="checkbox" id="ai-ocr" name="ai_features" value="ocr"><div class="label-content"><span class="label-title"><strong>OCR:</strong></span><span class="label-description">Extraer texto automáticamente de documentos escaneados e imágenes.</span></div></label>
+          <label class="label-item" for="ai-audio"><input type="checkbox" id="ai-audio" name="ai_features" value="audio_analytics"><div class="label-content"><span class="label-title"><strong>Análisis de Audio:</strong></span><span class="label-description">Transcribir grabaciones de audio a texto.</span></div></label>
+          <label class="label-item" for="ai-vision"><input type="checkbox" id="ai-vision" name="ai_features" value="computer_vision"><div class="label-content"><span class="label-title"><strong>Visión por Computador:</strong></span><span class="label-description">Analizar imágenes/videos para detectar objetos o personas.</span></div></label>
         </div>
         
         <div class="question-group">
           <p class="question-title">🛡️ Capacidades de Investigación y Seguridad</p>
-          <label class="label-item"><input type="radio" name="user_roles" value="required" required><div class="label-content"><span class="label-title"><strong>Gestión de Usuarios:</strong></span><span class="label-description">SÍ, es necesario tener roles (ej. Administrador, Investigador) desde el inicio.</span></div></label>
-          <label class="label-item"><input type="radio" name="user_roles" value="not_required" required><div class="label-content"><span class="label-title"><strong>Gestión de Usuarios:</strong></span><span class="label-description">NO, un solo tipo de usuario es suficiente para el MVP.</span></div></label>
+          <label class="label-item" for="roles-yes"><input type="radio" id="roles-yes" name="user_roles" value="required" required><div class="label-content"><span class="label-title"><strong>Gestión de Usuarios:</strong></span><span class="label-description">SÍ, es necesario tener roles (ej. Administrador, Investigador) desde el inicio.</span></div></label>
+          <label class="label-item" for="roles-no"><input type="radio" id="roles-no" name="user_roles" value="not_required" required><div class="label-content"><span class="label-title"><strong>Gestión de Usuarios:</strong></span><span class="label-description">NO, un solo tipo de usuario es suficiente para el MVP.</span></div></label>
 
-          <label class="label-item"><input type="radio" name="chain_of_custody" value="required" required><div class="label-content"><span class="label-title"><strong>Cadena de Custodia:</strong></span><span class="label-description">SÍ, es indispensable registrar de forma inalterable la obtención de cada prueba.</span></div></label>
-          <label class="label-item"><input type="radio" name="chain_of_custody" value="not_required" required><div class="label-content"><span class="label-title"><strong>Cadena de Custodia:</strong></span><span class="label-description">NO, un registro simple es suficiente por ahora.</span></div></label>
+          <label class="label-item" for="custody-yes"><input type="radio" id="custody-yes" name="chain_of_custody" value="required" required><div class="label-content"><span class="label-title"><strong>Cadena de Custodia:</strong></span><span class="label-description">SÍ, es indispensable registrar de forma inalterable la obtención de cada prueba.</span></div></label>
+          <label class="label-item" for="custody-no"><input type="radio" id="custody-no" name="chain_of_custody" value="not_required" required><div class="label-content"><span class="label-title"><strong>Cadena de Custodia:</strong></span><span class="label-description">NO, un registro simple es suficiente por ahora.</span></div></label>
         </div>
         
         <div class="question-group">
           <p class="question-title">🧩 Arquitectura y Servicios Adicionales</p>
-          <label class="label-item"><input type="radio" name="architecture_model" value="modular_plugins" required><div class="label-content"><span class="label-title"><strong>Arquitectura Modular (Plugins):</strong></span><span class="label-description">Prefiero una aplicación base sólida que pueda crecer añadiendo funcionalidades como "plugins" de pago.</span></div></label>
-          <label class="label-item"><input type="radio" name="architecture_model" value="monolithic" required><div class="label-content"><span class="label-title"><strong>Aplicación Monolítica:</strong></span><span class="label-description">Prefiero que todas las funcionalidades posibles se incluyan en el desarrollo inicial.</span></div></label>
+          <label class="label-item" for="arch-modular"><input type="radio" id="arch-modular" name="architecture_model" value="modular_plugins" required><div class="label-content"><span class="label-title"><strong>Arquitectura Modular (Plugins):</strong></span><span class="label-description">Prefiero una aplicación base sólida que pueda crecer añadiendo funcionalidades como "plugins" de pago.</span></div></label>
+          <label class="label-item" for="arch-mono"><input type="radio" id="arch-mono" name="architecture_model" value="monolithic" required><div class="label-content"><span class="label-title"><strong>Aplicación Monolítica:</strong></span><span class="label-description">Prefiero que todas las funcionalidades posibles se incluyan en el desarrollo inicial.</span></div></label>
         </div>
 
       </fieldset>
       
-      <!-- PARTE 2: CONTEXTO DEL NEGOCIO -->
+      <!-- =============================== -->
+      <!-- 3. Sobre su Empresa y Proyecto -->
+      <!-- =============================== -->
       <fieldset>
           <legend>🏢 3. Sobre su Empresa y Proyecto</legend>
           <div class="question-group">
             <p class="question-title">¿Cuál de las siguientes opciones describe mejor a su empresa?</p>
-            <label class="label-item"><input type="radio" name="company_size" value="startup" required> Emprendedor individual / Startup (1-5 personas).</label>
-            <label class="label-item"><input type="radio" name="company_size" value="pyme" required> Pequeña o mediana empresa (PYME) (6-50 personas).</label>
-            <label class="label-item"><input type="radio" name="company_size" value="large_corp" required> Empresa grande o corporación (+50 personas).</label>
+            <label class="label-item" for="company-startup"><input type="radio" id="company-startup" name="company_size" value="startup" required> Emprendedor individual / Startup (1-5 personas).</label>
+            <label class="label-item" for="company-pyme"><input type="radio" id="company-pyme" name="company_size" value="pyme" required> Pequeña o mediana empresa (PYME) (6-50 personas).</label>
+            <label class="label-item" for="company-large"><input type="radio" id="company-large" name="company_size" value="large_corp" required> Empresa grande o corporación (+50 personas).</label>
           </div>
       </fieldset>
 
+      <!-- =============================== -->
+      <!-- 4. Alcance, Plazos e Inversión -->
+      <!-- =============================== -->
       <fieldset>
           <legend>🚀 4. Alcance, Plazos e Inversión</legend>
           <div class="question-group">
             <p class="question-title">En base a sus necesidades, ¿qué alcance de MVP considera más adecuado?</p>
             <div class="option-container">
-                <label class="option-card"><input type="radio" name="mvp_scope" value="esencial" required><div class="card-content"><h4>Opción 1: MVP Esencial</h4><p>Para validar la idea al menor coste.</p><ul><li>Funciones básicas de repositorio</li><li>Seguridad estándar</li></ul></div></label>
-                <label class="option-card"><input type="radio" name="mvp_scope" value="balanceado" required><div class="card-content"><h4>Opción 2: MVP OSINT</h4><p>Herramienta de investigación activa.</p><ul><li>Funciones OSINT</li><li>Encriptación y Cadena de Custodia</li></ul></div></label>
-                <label class="option-card"><input type="radio" name="mvp_scope" value="avanzado" required><div class="card-content"><h4>Opción 3: MVP con IA</h4><p>Plataforma cognitiva de vanguardia.</p><ul><li>Todas las funciones OSINT + IA (OCR, RAG)</li></ul></div></label>
+                <label class="option-card" for="mvp-esencial"><input type="radio" id="mvp-esencial" name="mvp_scope" value="esencial" required><div class="card-content"><h4>Opción 1: MVP Esencial</h4><p>Para validar la idea al menor coste.</p><ul><li>Funciones básicas de repositorio</li><li>Seguridad estándar</li></ul></div></label>
+                <label class="option-card" for="mvp-balanceado"><input type="radio" id="mvp-balanceado" name="mvp_scope" value="balanceado" required><div class="card-content"><h4>Opción 2: MVP OSINT</h4><p>Herramienta de investigación activa.</p><ul><li>Funciones OSINT</li><li>Encriptación y Cadena de Custodia</li></ul></div></label>
+                <label class="option-card" for="mvp-avanzado"><input type="radio" id="mvp-avanzado" name="mvp_scope" value="avanzado" required><div class="card-content"><h4>Opción 3: MVP con IA</h4><p>Plataforma cognitiva de vanguardia.</p><ul><li>Todas las funciones OSINT + IA (OCR, RAG)</li></ul></div></label>
             </div>
           </div>
           <div class="question-group">
             <p class="question-title" style="margin-top: 2rem;">Nuestro modelo de trabajo ideal es Part-Time por 3-6 meses. ¿Se alinea esto con su visión?</p>
-            <label class="label-item"><input type="radio" name="collaboration_model" value="part_time_3m" required> SÍ: Una colaboración Part-Time (20h/sem) por 3-6 meses es ideal.</label>
-            <label class="label-item"><input type="radio" name="collaboration_model" value="full_time_short" required> NO: Necesitamos un proyecto Full-Time de corta duración (1-3 meses).</label>
+            <label class="label-item" for="colab-part"><input type="radio" id="colab-part" name="collaboration_model" value="part_time_3m" required> SÍ: Una colaboración Part-Time (20h/sem) por 3-6 meses es ideal.</label>
+            <label class="label-item" for="colab-full"><input type="radio" id="colab-full" name="collaboration_model" value="full_time_short" required> NO: Necesitamos un proyecto Full-Time de corta duración (1-3 meses).</label>
           </div>
           <div class="question-group">
             <p class="question-title" style="margin-top: 2rem;">Finalmente, para alinear la solución con la inversión, ¿qué rango considera para esta fase?</p>
-            <label class="label-item"><input type="radio" name="budget_range" value="range_a" required> Rango A (&lt; $5,000 USD)</label>
-            <label class="label-item"><input type="radio" name="budget_range" value="range_b" required> Rango B ($5,000 - $15,000 USD)</label>
-            <label class="label-item"><input type="radio" name="budget_range" value="range_c" required> Rango C (&gt; $15,000 USD)</label>
+            <label class="label-item" for="budget-a"><input type="radio" id="budget-a" name="budget_range" value="range_a" required> Rango A (&lt; $5,000 USD)</label>
+            <label class="label-item" for="budget-b"><input type="radio" id="budget-b" name="budget_range" value="range_b" required> Rango B ($5,000 - $15,000 USD)</label>
+            <label class="label-item" for="budget-c"><input type="radio" id="budget-c" name="budget_range" value="range_c" required> Rango C (&gt; $15,000 USD)</label>
           </div>
       </fieldset>
       
+      <!-- =============================== -->
+      <!-- 5. Estilo Visual y Confirmación -->
+      <!-- =============================== -->
       <fieldset>
         <legend>💎 5. Estilo Visual y Confirmación</legend>
         <div class="question-group">
           <p class="question-title">¿Considera que el estilo visual de este mismo briefing (moderno, oscuro, con acentos dorados) es una buena base para el diseño de la aplicación final?</p>
-          <label class="option-card"><input type="radio" name="visual_style" value="like_briefing" required><div class="card-content"> SÍ: Me gusta este estilo y lo podemos usar como una excelente referencia.</div></label>
-          <label class="option-card"><input type="radio" name="visual_style" value="traditional" required><div class="card-content"> PREFIERO OTRO: Me gustaría un estilo más tradicional y sobrio (ej. tonos grises, blancos).</div></label>
-          <label class="option-card"><input type="radio" name="visual_style" value="open_to_proposals" required><div class="card-content"> ABIERTO: Estoy abierto a otras propuestas de diseño que puedas presentar.</div></label>
+          <label class="option-card" for="visual-briefing"><input type="radio" id="visual-briefing" name="visual_style" value="like_briefing" required><div class="card-content"> SÍ: Me gusta este estilo y lo podemos usar como una excelente referencia.</div></label>
+          <label class="option-card" for="visual-trad"><input type="radio" id="visual-trad" name="visual_style" value="traditional" required><div class="card-content"> PREFIERO OTRO: Me gustaría un estilo más tradicional y sobrio (ej. tonos grises, blancos).</div></label>
+          <label class="option-card" for="visual-open"><input type="radio" id="visual-open" name="visual_style" value="open_to_proposals" required><div class="card-content"> ABIERTO: Estoy abierto a otras propuestas de diseño que puedas presentar.</div></label>
         </div>
         <div class="question-group">
           <p class="question-title" style="margin-top: 2rem;">Comentarios Adicionales</p>
-          <textarea name="additional_comments" placeholder="Si hay algún aspecto importante que no hayamos cubierto, por favor, detállelo aquí..."></textarea>
+          <!-- Textarea para comentarios adicionales -->
+          <textarea name="additional_comments" placeholder="Si hay algún aspecto importante que no hayamos cubierto, por favor, detállelo aquí..." minlength="0" maxlength="1000"></textarea>
         </div>
         <div class="question-group">
           <p class="question-title" style="margin-top: 2rem;">Confirmación Final</p>
           <div class="confirmation-section">
-              <p>YO, <span class="client-name">SANTIAGO PALACIOS</span>, ACTUALIZO LOS REQUERIMIENTOS DEL SOFTWARE A CONTRATAR EN FECHA Y HORA: <input type="text" name="confirmation_timestamp" readonly></p>
+              <p>YO, <span class="client-name">SANTIAGO PALACIOS</span>, ACTUALIZO LOS REQUERIMIENTOS DEL SOFTWARE A CONTRATAR EN FECHA Y HORA: <input type="text" name="confirmation_timestamp" readonly aria-label="Fecha y hora de confirmación"></p>
           </div>
         </div>
       </fieldset>
 
-      <!-- Action Buttons -->
+      <!-- Botones de acción -->
       <div class="actions-container">
-          <a href="#" id="githubSubmitButton" class="neon-button">
+          <a href="#" id="githubSubmitButton" class="neon-button" role="button" aria-label="Confirmar y Enviar Briefing">
               <span></span><span></span><span></span><span></span>
               Confirmar y Enviar Briefing
           </a>
           
           <div class="export-buttons">
-              <button type="button" id="exportJsonButton">Exportar a JSON</button>
+              <!-- Botón para exportar a PDF -->
+              <button type="button" id="exportPdfButton">Exportar a PDF</button>
+              <!-- Botón para exportar a TXT (ahora muestra modal) -->
               <button type="button" id="exportTxtButton">Exportar a TXT</button>
           </div>
-          <div id="statusMessage"></div>
+          <div id="statusMessage" aria-live="polite"></div>
+      </div>
+
+      <!-- Modal para previsualizar el TXT generado -->
+      <div id="txtModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.7); z-index:1000; justify-content:center; align-items:center;">
+        <div style="background:#1a1a1a; color:#fff; padding:2rem; border-radius:10px; max-width:90vw; max-height:80vh; overflow:auto; position:relative;">
+          <!-- Botón para cerrar el modal -->
+          <button id="closeTxtModal" style="position:absolute; top:10px; right:10px; background:none; border:none; color:#FFD700; font-size:1.5rem; cursor:pointer;">&times;</button>
+          <h3>Vista previa del TXT</h3>
+          <!-- Área de texto solo lectura para mostrar el contenido -->
+          <textarea id="txtPreview" readonly style="width:100%; height:300px; background:#222; color:#fff; border:1px solid #FFD700; border-radius:6px; margin-bottom:1rem;"></textarea>
+          <!-- Botón para descargar el archivo TXT -->
+          <button id="downloadTxtButton" style="background:#FFD700; color:#1a1a1a; border:none; padding:0.5rem 1rem; border-radius:6px; font-weight:bold; cursor:pointer;">Descargar TXT</button>
+        </div>
       </div>
     </form>
 
@@ -440,126 +200,10 @@
     </div>
   </div>
 
+  <!-- Cargar librería jsPDF desde CDN para exportar a PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- Cargar JS externo principal -->
   <script src="config.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const form = document.getElementById('briefingForm');
-        const statusMessage = document.getElementById('statusMessage');
-        const confirmationTimestampInput = form.querySelector('input[name="confirmation_timestamp"]');
-        
-        function getFormData() {
-            const data = {};
-            form.querySelectorAll('input[type="radio"]:checked').forEach(radio => { data[radio.name] = radio.value; });
-            const checkboxGroups = {};
-            form.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-                if (!checkboxGroups[cb.name]) checkboxGroups[cb.name] = [];
-                if (cb.checked) checkboxGroups[cb.name].push(cb.value);
-            });
-            Object.keys(checkboxGroups).forEach(groupName => {
-                data[groupName] = checkboxGroups[groupName].length > 0 ? checkboxGroups[groupName] : false;
-            });
-            form.querySelectorAll('textarea, input[type="text"]').forEach(input => {
-                if(!data.hasOwnProperty(input.name)) { data[input.name] = input.value; }
-            });
-            data.client_name = "SANTIAGO PALACIOS";
-            return data;
-        }
-
-        function validateRequiredFields() {
-            const requiredRadioGroups = [
-                'confirm_fields', 'excel_export', 'data_migration',
-                'user_roles', 'chain_of_custody', 'architecture_model', 
-                'company_size', 'mvp_scope', 'collaboration_model', 
-                'budget_range', 'visual_style'
-            ];
-            if (!form.querySelector('input[name="project_purpose"]:checked')) {
-                 statusMessage.style.color = '#ff6b6b';
-                 statusMessage.textContent = `Por favor, complete la sección: "🎯 1. Enfoque Estratégico del Proyecto"`;
-                 return false;
-            }
-            for (const groupName of requiredRadioGroups) {
-                if (!form.querySelector(`input[name="${groupName}"]:checked`)) {
-                    const fieldset = form.querySelector(`input[name="${groupName}"]`).closest('fieldset');
-                    if (fieldset) {
-                       const legend = fieldset.querySelector('legend').textContent;
-                       const questionGroup = form.querySelector(`input[name="${groupName}"]`).closest('.question-group');
-                       const questionTitle = questionGroup ? questionGroup.querySelector('.question-title').textContent : legend.trim();
-                       statusMessage.style.color = '#ff6b6b';
-                       statusMessage.textContent = `Por favor, responda la pregunta: "${questionTitle}"`;
-                       return false;
-                    }
-                }
-            }
-            statusMessage.textContent = '';
-            return true;
-        }
-
-        document.getElementById('githubSubmitButton').addEventListener('click', function(e) {
-            e.preventDefault(); 
-            confirmationTimestampInput.value = new Date().toLocaleString('es-ES', { dateStyle: 'full', timeStyle: 'medium' });
-            if (!validateRequiredFields()) return;
-            if (typeof googleScriptUrl === 'undefined' || googleScriptUrl === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE') {
-                statusMessage.style.color = '#ff6b6b';
-                statusMessage.textContent = 'Error: La URL de Google Apps Script no está configurada en config.js';
-                return;
-            }
-            const button = this;
-            button.style.pointerEvents = 'none';
-            const buttonText = button.childNodes[button.childNodes.length-1];
-            buttonText.textContent = 'Enviando...';
-            statusMessage.style.color = 'var(--primary-color)';
-            statusMessage.textContent = 'Procesando y enviando briefing...';
-            const data = getFormData();
-            fetch(googleScriptUrl, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify(data)
-            })
-            .then(() => { 
-                statusMessage.textContent = '✅ Su briefing ha sido enviado.';
-                form.reset();
-                confirmationTimestampInput.value = '';
-            })
-            .catch(error => {
-                console.error('Error en fetch:', error);
-                statusMessage.textContent = '❌ Error de red al enviar. Revise la consola (F12).';
-                statusMessage.style.color = '#ff6b6b';
-            })
-            .finally(() => {
-                buttonText.textContent = 'Confirmar y Enviar Briefing';
-                button.style.pointerEvents = 'auto';
-                setTimeout(() => { statusMessage.textContent = ''; }, 6000);
-            });
-        });
-
-        document.getElementById('exportJsonButton').addEventListener('click', function() {
-            if (!validateRequiredFields()) { return; }
-            downloadFile(JSON.stringify(getFormData(), null, 2), 'briefing-respuestas.json', 'application/json');
-        });
-
-        document.getElementById('exportTxtButton').addEventListener('click', function() {
-            if (!validateRequiredFields()) { return; }
-            let txtContent = "Respuestas del Briefing - Gestor Legal\n=========================================\n\n";
-            const data = getFormData();
-            for (const key in data) {
-                let formattedKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                let formattedValue = Array.isArray(data[key]) ? data[key].join(', ') : (data[key] || 'No seleccionado');
-                txtContent += `${formattedKey}: ${formattedValue}\n`;
-            }
-            downloadFile(txtContent, 'briefing-respuestas.txt', 'text/plain');
-        });
-
-        function downloadFile(content, fileName, contentType) {
-            const a = document.createElement('a');
-            const file = new Blob([content], { type: contentType });
-            a.href = URL.createObjectURL(file);
-            a.download = fileName;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(a.href);
-        }
-    });
-  </script>
+  <script src="main.js"></script>
 </body>
 </html>

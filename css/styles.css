@@ -1,0 +1,280 @@
+/* =============================
+   styles.css
+   Estilos principales del briefing
+   ============================= */
+
+:root {
+  --bg-main: #0a0a0a;
+  --bg-surface: #1a1a1a;
+  --primary-color: #03dac6;
+  --secondary-color: #bb86fc;
+  --gold-color: #FFD700;
+  --glow-color: rgba(255, 215, 0, 0.5);
+  --text-main: #FFFFFF;
+  --text-secondary: #B3B3B3;
+  --border-color-base: #2c2c2c;
+}
+
+/* Estilo general del body */
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  padding: 2rem 1rem;
+  line-height: 1.6;
+}
+
+/* Contenedor principal del formulario */
+.container {
+  max-width: 900px;
+  margin: auto;
+  background-color: var(--bg-surface);
+  padding: 2.5rem;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  border: 1px solid var(--border-color-base);
+  overflow: hidden;
+}
+
+/* Ajustes responsivos */
+@media (max-width: 768px) {
+    body { padding: 1rem 0.5rem; }
+    .container { padding: 1.5rem; margin: 0 0.5rem; }
+    h1 { font-size: 1.8rem; }
+    legend { font-size: 1.1rem; }
+    .checkbox-grid { grid-template-columns: 1fr !important; }
+}
+
+@media (max-width: 480px) {
+    body { padding: 0.5rem 0.25rem; }
+    .container { padding: 1rem; margin: 0 0.25rem; }
+    h1 { font-size: 1.5rem; }
+    legend { font-size: 1rem; }
+    fieldset { padding: 1rem; }
+    .label-item { font-size: 0.9rem; }
+}
+
+/* Encabezado */
+header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  border-bottom: 1px solid var(--border-color-base);
+  padding-bottom: 1.5rem;
+}
+
+h1 {
+  font-weight: 700;
+  color: var(--primary-color);
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+}
+
+header p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  max-width: 700px;
+  margin: auto;
+}
+
+/* Fieldset para agrupar preguntas */
+fieldset {
+  border: 1px solid var(--gold-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2.5rem;
+  position: relative;
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+fieldset:hover, fieldset:focus-within {
+  box-shadow: 0 0 15px var(--glow-color);
+}
+
+/* Título de cada fieldset */
+legend {
+  font-weight: 600;
+  font-size: 1.3rem;
+  color: var(--gold-color);
+  padding: 0 0.8rem;
+  margin-left: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+/* Estructura de las preguntas */
+.question-group {
+    margin-bottom: 2rem;
+}
+.question-group:last-child {
+    margin-bottom: 0;
+}
+
+.question-title {
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 1rem;
+    padding-left: 0.5rem;
+}
+
+/* Estilo general de los labels */
+.label-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  padding: 0.8rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-weight: 300;
+  position: relative;
+}
+
+.label-item strong {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.label-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.label-title {
+    font-weight: 600;
+}
+
+.label-description {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+}
+
+/* Radios y checkboxes personalizados */
+input[type="radio"],
+input[type="checkbox"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: var(--bg-main);
+  margin-right: 1rem;
+  font: inherit;
+  color: var(--primary-color);
+  width: 1.5em;
+  height: 1.5em;
+  border: 0.15em solid var(--primary-color);
+  border-radius: 50%;
+  transform: translateY(0.1em);
+  display: grid;
+  place-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+input[type="checkbox"] {
+  border-radius: 0.3em;
+}
+
+input[type="radio"]::before {
+  content: ""; width: 0.8em; height: 0.8em;
+  border-radius: 50%;
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+  box-shadow: inset 1em 1em var(--primary-color);
+}
+
+input[type="checkbox"]::before {
+  content: ""; width: 0.8em; height: 0.8em;
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+  box-shadow: inset 1em 1em var(--primary-color);
+  transform-origin: bottom left;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+input[type="radio"]:checked::before,
+input[type="checkbox"]:checked::before {
+  transform: scale(1);
+}
+
+/* Tarjetas de opciones */
+.option-container {
+    display: flex; flex-direction: column; gap: 1.5rem;
+}
+.option-card {
+    padding: 1.5rem;
+    border: 1px solid var(--border-color-base);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.option-card:hover,
+.option-card:has(input:checked) {
+   border-color: var(--gold-color);
+   box-shadow: 0 0 20px -5px var(--glow-color);
+}
+.card-content h4 {
+    font-size: 1.1rem; font-weight: 600; color: var(--primary-color);
+    margin-top: 0; margin-bottom: 0.5rem;
+}
+.card-content p {
+    font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;
+}
+
+/* Textarea y confirmación */
+textarea {
+    width: 100%; background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color-base); border-radius: 6px;
+    padding: 1rem; color: var(--text-main); font-family: 'Poppins', sans-serif;
+    font-size: 1rem; min-height: 250px; resize: vertical;
+    box-sizing: border-box; transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+textarea:focus {
+    outline: none; border-color: var(--gold-color);
+    box-shadow: 0 0 15px -5px var(--glow-color);
+}
+.confirmation-section {
+    text-transform: uppercase; font-size: 11px;
+    letter-spacing: 0.5px; color: var(--text-secondary); line-height: 2;
+}
+.confirmation-section .client-name { color: var(--gold-color); font-weight: 700; }
+.confirmation-section input[name="confirmation_timestamp"] {
+    background: none; border: none; color: var(--text-secondary);
+    font-family: 'Poppins', sans-serif; font-size: 11px;
+    text-transform: uppercase; padding: 0; width: 100%;
+}
+
+/* Botones y acciones */
+.actions-container {
+    margin-top: 2.5rem; display: flex; flex-direction: column;
+    align-items: center; gap: 1.5rem;
+}
+.neon-button {
+    position: relative; display: inline-block; padding: 15px 30px;
+    color: var(--gold-color); background: none; border: 2px solid var(--gold-color);
+    border-radius: 8px; text-transform: uppercase; text-decoration: none;
+    letter-spacing: 2px; font-size: 1.2rem; font-weight: 700;
+    overflow: hidden; transition: 0.5s; cursor: pointer;
+}
+.neon-button:hover {
+    background: var(--gold-color); color: #050801;
+    box-shadow: 0 0 5px var(--gold-color), 0 0 25px var(--gold-color),
+                0 0 50px var(--gold-color), 0 0 100px var(--gold-color);
+}
+.neon-button span { position: absolute; display: block; }
+.neon-button span:nth-child(1) { top: 0; left: -100%; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--gold-color)); animation: animate1 1s linear infinite; }
+@keyframes animate1 { 0% { left: -100%; } 50%, 100% { left: 100%; } }
+.neon-button span:nth-child(2) { top: -100%; right: 0; width: 2px; height: 100%; background: linear-gradient(180deg, transparent, var(--gold-color)); animation: animate2 1s linear infinite; animation-delay: 0.25s; }
+@keyframes animate2 { 0% { top: -100%; } 50%, 100% { top: 100%; } }
+.neon-button span:nth-child(3) { bottom: 0; right: -100%; width: 100%; height: 2px; background: linear-gradient(270deg, transparent, var(--gold-color)); animation: animate3 1s linear infinite; animation-delay: 0.5s; }
+@keyframes animate3 { 0% { right: -100%; } 50%, 100% { right: 100%; } }
+.neon-button span:nth-child(4) { bottom: -100%; left: 0; width: 2px; height: 100%; background: linear-gradient(360deg, transparent, var(--gold-color)); animation: animate4 1s linear infinite; animation-delay: 0.75s; }
+@keyframes animate4 { 0% { bottom: -100%; } 50%, 100% { bottom: 100%; } }
+.export-buttons { display: flex; gap: 1rem; justify-content: center; }
+.export-buttons button {
+    background: transparent; border: 2px solid var(--gold-color); color: var(--gold-color);
+    font-size: 0.9rem; font-weight: 600; padding: 0.5rem 1rem; border-radius: 8px;
+    cursor: pointer; transition: all 0.3s ease;
+}
+.export-buttons button:hover { background: var(--gold-color); color: var(--bg-surface); }
+
+#statusMessage { text-align: center; margin-top: 1rem; min-height: 20px; color: var(--primary-color); transition: opacity 0.3s ease; }
+.closing-signature { text-align: center; margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border-color-base); color: var(--text-secondary); } 
