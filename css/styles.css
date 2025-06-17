@@ -202,9 +202,12 @@ input[type="checkbox"]:checked::before {
     display: flex; flex-direction: column; gap: 1.5rem;
 }
 .option-card {
+    display: flex;
+    align-items: center;
     padding: 1.5rem;
     border: 1px solid var(--border-color-base);
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    gap: 1.2rem;
 }
 .option-card:hover,
 .option-card:has(input:checked) {
